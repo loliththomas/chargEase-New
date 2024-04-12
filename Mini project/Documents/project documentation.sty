@@ -1,0 +1,508 @@
+\documentclass[11pt]{report}
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{epsfig}
+\usepackage{fancyhdr}
+%\usepackage{fullpage}
+\usepackage{float}
+\usepackage{xspace}
+%\usepackage{algorithm}
+%\usepackage{algorithmic}
+%usepackage{algorithmicx}
+
+\begin{document}
+	\renewcommand\bibname{References}
+	\pagestyle{fancy}
+	\fancyhead{}
+	\fancyfoot{}
+	\fancyfoot[c]{\thepage}
+	\fancyfoot[l]{CSD334-Mini Project 2024}
+	\lhead{abcd}
+	\renewcommand{\chaptermark}[1]{
+		\markboth{\thechapter.\ #1}{}}
+	\renewcommand{\headrulewidth}{0.1pt}
+	\fancyhead[r]{\slshape \leftmark}
+	\addtolength{\headheight}{\baselineskip}
+
+	\lhead{\nouppercase{\rightmark}}
+	\rhead{\nouppercase{\leftmark}}
+	%\lhead{hhhhh}
+	%\fancyhead[LO,RE]{\slshape \leftmark}
+	%\bibliographystyle{plain}
+	\title {chargeEase}
+	%\maketitle
+
+	\begin{titlepage}
+		\begin{center}
+
+			%\topmargin100pt
+			\Huge{\textbf{chargeEase - EV charging station App}}\\
+			\large{\textbf{CSD 334  MINI PROJECT\\}}
+			\vspace{1.2in}
+			\Large{\textbf{19 MDL21CS033
+			}}	\hspace{.1in}	\Large{\textbf{Arun Shaji}}\\
+			\Large{\textbf{27 MDL21CS055
+			}}	\hspace{.1in}	\Large{\textbf{Irene Tresa Mathews}}\\
+			\Large{\textbf{37 MDL21CS074
+			}}	\hspace{.1in}	\Large{\textbf{Lolith Thomas}}\\
+		      \vspace{0.5cm}
+
+			\Large{\textbf{
+					B. Tech. Computer Science \& Engineering
+			}}
+
+			\vspace{.in}
+			\begin{figure}[h]
+				\begin{center}
+					%\epsfig{width=1in, file=embN1.jpg}
+					\epsfig{width=1in, file=logo.jpg}
+					% If you have access to better quality logo image, that may be used, but all the groups should use the same image
+				\end{center}
+			\end{figure}
+			%\vspace{.2in}
+			\textbf{
+				Department of Computer Engineering\\
+				Model Engineering College, Ernakulam\\
+				Thrikkakara, Kochi 682021\\
+				Phone: +91.484.2575370\\
+				http://www.mec.ac.in \\
+				hodcs@mec.ac.in
+			}
+           \vspace{2.0cm}
+
+        \textbf{May 2024}
+
+		\end{center}
+	\end{titlepage}
+\begin{titlepage}
+		\begin{center}
+			\Large{\textbf{Model Engineering College, Ernakulam}}\\
+			\Large{\textbf{Dept. of Computer Engineering}}\\
+		\end{center}
+		\begin{figure}[h]
+			\begin{center}
+				\epsfig{width=1in, file=logo.jpg}
+			\end{center}
+		\end{figure}
+		\begin{center}
+	\Large{\textbf{C E R T I F I C A T E}}\\
+	\vspace{.1in}
+\end{center}
+This is to certify that, this report titled \textbf{\textit {chargeEase}} is a bonafide record of the work done by
+\\ \centerline{{\textbf{19
+		MDL21CS033
+}}	\hspace{.1in}	{\textbf{ARUN SHAJI}}}\\
+\centerline{{\textbf{27
+		MDL21CS055
+}}	\hspace{.1in}	{\textbf{IRENE TRESA MATHEWS}}}\\
+\centerline{{\textbf{37
+			MDL21CS074
+	}}	\hspace{.1in}	{\textbf{LOLITH THOMAS}}}\\
+
+{{\textbf{Sixth Semester} B. Tech. Computer Science \& Engineering }}
+student,  for the course work in \textbf{CSD334 - Mini Project} which is the Mini Project Work, under our guidance and supervision, in partial
+fulfillment of the requirements for the award of the degree, B. Tech. Computer
+Science  and Engineering of \textbf{APJ Abdul Kalam University }.
+\vspace{.1in}
+		\begin{tabbing}
+			xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\= xxxxxxxxxxxxxxxxxx\= \kill
+
+			Guide			\>				Coordinator
+			\\
+			\\
+			\\
+			Name  \>Name\\
+			Designation	\>Designation\\
+			Computer Engineering	\>	Computer Engineering
+		\end{tabbing}
+		\vspace{.08in}
+		%
+		\begin{tabbing}
+			xxxxxxxxxxxxxxxxxxxxxxxxxxxx\= xxxxxxxxxxxxxxxxxx\= \kill
+			\>Head of the Department \\
+			\\
+			\\
+			\today
+			\>Dr. Binu V. P\\
+			\>Professor\\
+			\>Computer Engineering\\
+		\end{tabbing}
+	\end{titlepage}
+
+		\begin{center}
+			\thispagestyle{empty}
+			\LARGE{\textbf{Acknowledgements}}\\[1cm]
+		\end{center}
+		\linespread{1.13}
+		\par We are profoundly grateful to Asst Prof. Murali Mohanan for his expert guidance and continuous
+		encouragement throughout to see that this project rights its target since its commencement to
+		its completion. We would like to express deepest appreciation towards Dr. Mini G,
+		Principal, Govt. Model Engineering college, Dr. Binu V. P, Head of Department of
+		Computer Engineering. At last we must express our sincere heartfelt gratitude to all the staff
+		members of Computer Engineering Department who helped me directly or indirectly during this
+		course of work.
+
+		\begin{flushleft}
+			{
+				LOLITH THOMAS
+				\\ARUN SHAJI
+				\\IRENE TRESA MATHEWS
+			}
+		\end{flushleft}
+	\newpage
+
+
+	\begin{abstract}
+		\pagenumbering{roman}
+    In response to the pressing need for sustainable transportation solutions, this project proposes the development of a user-centric mobile application aimed at revolutionizing the electric vehicle (EV) charging experience. Leveraging the cross-platform development framework Flutter, the application offers seamless compatibility across iOS and Android devices, ensuring widespread accessibility for EV owners. Backed by Firebase, a sophisticated database management system, chargeEase efficiently handles user profiles, charging station details, and real-time updates. The app serves as a comprehensive solution for EV owners seeking efficient charging options. Key functionalities include user profile management, real-time availability updates, personalized charging recommendations, and seamless coordination between charging station hosts and EV owners. By prioritizing user experience, accessibility, and sustainability, chargeEase aims to accelerate the adoption of electric vehicles and contribute to the reduction of traffic congestion and carbon emissions. Through the integration of cutting-edge technology and user-centric design principles, this solution paves the way for a more environmentally conscientious mode of transportation in the modern urban landscape.
+    
+	\end{abstract}
+
+	\tableofcontents
+
+	\chapter {Introduction}
+	\pagenumbering{arabic}
+	\label{intro}
+	chargeEase is a groundbreaking project aimed at transforming the electric vehicle (EV) charging landscape. Designed to address the challenges faced by EV owners, chargeEase offers a user-centric mobile application that simplifies and enhances the charging experience. By providing real-time station availability, personalized charging recommendations, and integrated payment systems, chargeEase aims to make EV charging convenient, efficient, and accessible for all. With its innovative features and commitment to sustainability, chargeEase is poised to revolutionize the way we charge our EVs, contributing to a cleaner, greener future for transportation.
+	\section{Proposed Project}
+	\subsection{\label{ps}Problem Statement}
+ 
+In light of the increasing adoption of electric vehicles (EVs) and the critical need for sustainable transportation solutions, there exists a significant challenge in efficiently locating and accessing EV charging stations. Current solutions often lack comprehensive features and user-friendly interfaces, leading to frustration and inconvenience for EV owners. Additionally, the lack of real-time availability updates and personalized recommendations exacerbates the issue, hindering the widespread adoption of EVs. Therefore, there is a pressing need for a user-centric mobile application that leverages modern technologies such as Flutter and Firebase to streamline the process of finding, reserving, and navigating to nearby charging stations. This app should prioritize user experience, accessibility, and sustainability, aiming to revolutionize the EV charging experience and accelerate the transition to electric vehicles worldwide.
+
+	\subsection{Proposed Solution}
+	chargeEase presents a holistic solution to the challenges faced by electric vehicle (EV) owners in locating and accessing charging stations efficiently. Leveraging modern technologies such as Flutter and Firebase, chargeEase offers a user-centric mobile application that streamlines the EV charging experience. With a comprehensive database of charging stations, real-time availability updates, and personalized recommendations, chargeEase ensures that users can easily find and access charging spots tailored to their needs. The app's intuitive interface, seamless reservation and payment system, and community engagement features further enhance the user experience, fostering greater adoption of electric vehicles and promoting sustainability in transportation. By prioritizing user experience, accessibility, and efficiency, chargeEase aims to revolutionize EV charging and accelerate the transition to electric mobility worldwide.
+	\newline
+
+%System STudy Report
+
+\chapter{System Study Report}
+	\section{\label{ps}Literature Study}
+
+
+\chapter{Software Requirements Specification}
+
+\section {Introduction}
+\subsection{Purpose}
+ChargEase is an Android application designed to streamline the electric vehicle (EV) charging experience. It aims to simplify the process of locating, reserving, and using charging stations, thereby promoting the efficient utilization of charging infrastructure and contributing to the sustainable growth of electric mobility.
+
+\subsection{Document Convention}
+This document follows MLA (Modern Language Association) Format. The boldfaced text has been used to emphasize section and sub-section headings. Highlighting is to point out words in the glossary and italicized text is used to label and recognize diagrams.
+This SRS follows the universally accepted norms used for a formal document. There aren’t many
+special conventions used, are listed as follows:
+\begin{itemize}
+\item Bold letters and words signify special importance to those words in that particular context
+\item Words which are in title case or uppercase in the middle on any particular sentence also
+\end{itemize}
+signify the emphasis on those words in the context of the topic
+We have also used multiple short forms in this SRS. The most important ones to be noted are
+mentioned as follows:
+\begin{itemize}
+    \item UI : User Interface
+    \item DBMS : Database Management System
+\end{itemize}
+
+
+\subsection{Intended Audience and Reading Suggestions}
+This document contains software functionality, software and hardware requirements
+and user documentation.
+\begin{itemize}
+    \item Developer: The developer who wants to read, change, modify or add new requirements into the existing program may need first to consult this document and update the requirements in an appropriate manner so as not to change the actual purpose of the system or make the system inconsistent.
+    \item User: The user of this program reviews the specification provided in the document and checks to determine whether the software has all the suitable requirements and if the software developer has implemented all of them. The user can also consult the user guide in the event of any confusion for clarifications.
+    \item Tester: The tester needs this document to prepare their test cases to validate that the initial requirements of this project is actually implemented in the deliverable. This document need not be read sequentially; users are encouraged to jump to any section they find relevant.
+\end{itemize}
+\subsection{Project Scope}
+
+The scope of the project includes the development of an Android application that provides users with the ability to locate nearby charging stations, check real-time availability, reserve charging slots, and make payments for charging sessions. The application will also feature a user-friendly interface, secure authentication, and authorization mechanisms, and community engagement features.
+
+    \subsection{Overview of Developer's Responsibilities}
+        \item Maintain appropriate coding standards and design.
+        \item Contribute to technical design documentation.
+        \item Contribution in accordance with the software development lifecycle.
+        
+        \section {Overall Description}
+
+        \subsection{Product Perspective}
+
+ChargEase is a standalone application that operates on Android devices. It interacts with external systems, such as charging station databases and payment gateways, to provide users with real-time information and secure booking capabilities.
+
+
+        \subsection{Product Functions}
+\begin{itemize}
+The primary functions of ChargEase include:
+    \item Locating nearby charging stations
+    \item Checking real-time availability of charging slots
+    \item Reserving charging slots
+    \item Making payments for charging sessions
+    \item Providing a user-friendly interface
+    \item Real-Time Updates and Notifications on Parking Availability
+    \item Implementing secure authentication and authorization mechanisms
+    \item Encouraging community engagement
+    \item Secure payment gateway
+ %   \item Reporting and Analytics
+
+\end{itemize}
+% include daTA FLOW DIAGRAM
+%\begin{figure}[h!]
+ %   \centering
+  %% \caption{Data Flow Diagram}
+   % \label{fig:Data Flow Diagram}
+%\end{figure}
+%        Before using the main function of the software result process, users have to be registered.
+
+    %    All users have - login\_parameter, user\_name, first\_name, last\_name, user\_id, role, post, email, phone\_number, present\_address, parmanent\_address, blood\_group, password\_hash and timeStamp.
+        \newline
+   %     Students have some extra informations after complete his/her registration , such as - user\_id(foreign key), registration\_id, year, semester, course\_array and drop\_course\_array. These are the information that contains his/her result of his taken courses and program.
+        \newline
+%Each programs has some data - program\_name, program\_id, course\_id, nunmber\_of\_semester, total\_credit and course\_length. There will be onew or many course\_id in each programs.
+        \newline
+     %   Courses table contains - course\_name, course\_id, course\_code, credit, semester and teacher\_id.
+        \newline
+ %       Every course has its own Credit Values. Those have been 2 types - lab, theory.
+   %     \newline
+  %      Result is the main feature of all. It contains the values of %all the exams of a particular student. It has data field - student\_id, course\_id, term\_test, attendance, marks(A), marks(B), teacher\_id(A), teacher\_id(B), entry\_date(A), entry\_date(B), publish\_date, semester	and result\_state.
+
+        \subsection{User Classes and Characteristics}
+        The application is designed for EV users who require access to charging stations. Users may vary in technical proficiency, but the application is intended to be user-friendly and accessible to all
+
+        
+        \subsection{Operating Environment}.
+
+ChargEase operates on Android devices running Android OS version 12.0 or higher. It requires an internet connection to access real-time data and communicate with external systems.
+\begin{itemize}
+    \item Database System:
+    chargeEase utilizes a centralized database infrastructure to efficiently store and manage information related to Charging Stations, user profiles, and booking data.
+
+    \item Client/Server Architecture:
+    ParkShare operates on a resilient client/server model, enabling seamless communication between users and parking lot operators for efficient parking reservation processes.
+
+    \item Operating System:
+    The chargeEAase Android app is optimized for the Android operating system, providing a consistent and user-friendly experience across a wide range of Android devices.
+    \item Database Management System:
+    Supabase / Firebase offers a reliable and feature-rich database management system, ensuring efficient data storage, retrieval, and management for a responsive and seamless user experience.
+
+    \item Platform:
+    chargeEase's Flutter app leverages the capabilities of the Dart programming language and Flutter framework to deliver a modern and intuitive user interface. Technologies such as Dart, Flutter SDK, and Material Design contribute to the app's sleek and user-centric design, enhancing the overall user experience for drivers and parking lot operators alike.
+
+\end{itemize}
+        \subsection{Design \& Implementation Constraints}
+        \begin{itemize}
+            \item Regulatory Policies: NA
+            \item Hardware Limitations: Devices must have Wi-Fi or mobile data that supports IEEE standards.
+            \item Interfaces to other applications: NA
+            \item Parallel operations: NA
+            \item Audit functions: NA
+            \item Control functions: NA
+            \item Safety and Security Considerations:The system must prevent unauthorized users from accessing the files.
+            \item Reliability Requirements: The total bugs in the system shall not exceed 1\% of the total line number of code, except connection reliability, which is out of range.
+        \end{itemize}
+\subsection{User Documents}
+\begin{itemize}
+    User documentation will be provided within the application, including a user guide and FAQs to assist users in navigating the application and understanding its features.
+\end{itemize}
+
+\subsection{General Constrains}
+\begin{itemize}
+    The application is subject to constraints related to Android OS compatibility, network availability, and external system dependencies.
+\end{itemize}
+
+        \subsection{Assumptions and Dependencies}
+\item The interface of the resulting system will be easy to use and accessible without a time or location constraint.
+\item The users have access to proper internet connection. 
+\item The users have an Android phone.
+\item It also depends on external systems, such as charging station databases and payment gateways, to provide real-time information and secure booking capabilities.
+
+\section{External Interface Requirement's}
+    \subsection{User Interface}
+        \begin{itemize}
+        \item chargeEase's frontend User Interface is developed using Flutter, providing a seamless experience across different platforms.
+        \item Components requiring User Interface: Landing Page, Signup Page, OTP Authentication, Searching page,Slot Booking, Data Manipulation, etc.
+        \item The User Interface is optimized for Android devices, ensuring compatibility and responsiveness across different screen sizes and resolutions.
+        \end{itemize}
+\begin{itemize}
+    \item Payment Integration:
+        \begin{itemize}
+            \item Secure Payment Processing: Integration of a reliable and secure payment system for transactions within the application.
+            \item Transparent Pricing: Ensuring transparent pricing for users to compare and choose the most suitable options for their budget.
+        \end{itemize}
+    \end{itemize}
+    \subsection{Software Interfaces}
+        \begin{itemize}
+
+        \item \textbf{Flutter:} Flutter is a comprehensive UI toolkit developed by Google, designed to streamline the development of cross-platform mobile applications with a single codebase. It offers a rich set of features and capabilities to enhance developer productivity and improve user experience.
+
+        \item \textbf{Material-UI:} Flutter's Material Design is a comprehensive UI framework that provides developers with a rich set of pre-designed widgets and tools for building visually appealing and responsive mobile applications.
+.
+
+        \item \textbf{Supabase:} Supabase revolutionizes application development with PostgreSQL at its core, offering real-time functionality, authentication, RESTful API generation, serverless functions, and seamless third-party integration in a collaborative, open-source ecosystem.
+
+        \item \textbf{Figma:} Figma redefines collaborative design with its cloud-based platform, empowering teams to create, prototype, and iterate on designs in real-time. Its intuitive interface, robust features, and seamless collaboration tools foster creativity and efficiency in the design process.
+
+        \item \textbf{Visual Studio Code:} Visual Studio Code (VSCode) is a versatile and lightweight source code editor with robust features for efficient development. With support for various programming languages, extensions, and a user-friendly interface, VSCode significantly contributes to the development workflow of EnsembleHaven.
+        erves as a powerful tool for EnsembleHaven's development team, foster
+
+        \item \textbf{Android Studio:} Android Studio revolutionizes mobile app development, providing developers with a powerful integrated development environment (IDE) equipped with advanced tools and features. Its intuitive interface, comprehensive code editor, and seamless integration with the Android platform streamline the process of building high-quality Android applications.
+
+
+        \end{itemize}
+        \subsection{Hardware Interfaces}
+ The various Hardware Interfaces include :
+   \begin{itemize}
+        \item Devices enabled with good Internet Connection via Wi-Fi or Ethernet connection.
+	\item Devices with at-least 1GHz of processing power.
+        \item Devices of various form factors and sizes.
+	\item Device with various input mechanisms such as touchscreens, keyboards, or voice input.
+   \end{itemize}
+
+    \subsection {Communication Interfaces}
+            The Communication interfaces include :
+        \begin{itemize}
+             \item \textbf{Email} : Purposed with official user registration and authentication.
+            \item \textbf{Push Notifications} : Implementing a notification system to keep users informed about slot availability, reservation status updates, and other relevant information in real-time.
+            \item \textbf{Real-Time Authentication Status} : chargeEase provides real-time updates and notifications to users and admins regarding the status of OTP authentication attempts, ensuring transparency and enhancing security throughout the authentication process.
+
+        \end{itemize}
+
+\section{ Hardware and Software Requirements}
+    \subsection{Hardware Requirements}
+    \begin{itemize}
+        \item Operating System: Android OS version 10.0 and above, ensuring compatibility with a wide range of Android devices.
+        \item Ram: Minimum 1 GB RAM, providing sufficient memory to support the application's operations and ensure smooth performance.
+        \item Processor: 1 GHz processor or better, enabling efficient processing of user interactions, data retrieval, and other app functionalities on various Android devices.
+        \item Internet Connection: Minimum 500 Kbps bandwidth, facilitating seamless communication between the chargeEase app and its servers for real-time updates, data synchronization, and other online functionalities.
+    \end{itemize}
+
+    \subsection{Software Requirements}
+    Our software requirements are stated in 3 groups. First one is our software requirements for developing process; second one is software requirements for server side, last one is software requirements for client side :
+        The "chargeEase" application is being built with the following technologies:
+
+    \subsubsection{Development Requirements}
+        \begin{itemize}
+            \item \textbf{Operating System:} Android Studio supports Windows, macOS, and Linux for development purposes.
+            \item \textbf{Frontend Framework:} Flutter framework for building cross-platform mobile applications.
+            \item \textbf{Frontend Libraries:} Material Design components provided by Flutter for consistent UI/UX across different devices.
+            \item \textbf{Frontend Development Environment Tool:} Android Studio with Flutter plugin for efficient development and debugging.
+            \item \textbf{Integrated Development Environment (IDE):} Android Studio provides a comprehensive development environment with features tailored for Android app development.
+        \end{itemize}
+
+\subsubsection{Server-Side Requirements}
+    \begin{itemize}
+        \item \textbf{Backend Framework:} Supabase for providing backend services including authentication, database management, and serverless functions.
+        \item \textbf{Database Management System:} Supabase utilizes PostgreSQL as its core database management system.
+        \item \textbf{Server Deployment:} Supabase provides hosting services for deploying and managing the ParkShare backend services.
+        \item \textbf{Caching:} Supabase offers caching mechanisms to optimize data retrieval and improve app performance.
+    \end{itemize}
+
+\subsubsection{Client-Side Requirements}
+Client-Side Requirements for the chargeEase Android Application entail the necessity of an Android device running Android OS version 10.0 or above, with a minimum of 1 GB RAM and a 1 GHz processor for optimal performance. The app should be compatible with various screen sizes, resolutions, and aspect ratios commonly found on Android devices, supporting touchscreen input for navigation and interaction. Adequate storage space is required for installing the chargeEase app and storing app-related data. Additionally, a stable internet connection, either through Wi-Fi or mobile data, is essential for accessing chargeEase servers, retrieving real-time data, and enabling features such as parking spot reservations and updates.
+
+
+
+
+
+
+\section{Functional Requirements}
+This section gives the details of the features and functions this system provides for various users and additional information on how each module works.
+\subsection{Locating Nearby Charging Stations}
+
+\begin{itemize}
+    \item Utilize GPS technology to determine the user's current location.
+    \item Display nearby charging stations on a map interface.
+    \item Offer options for filtering and sorting charging stations based on user preferences.
+\end{itemize}
+
+
+\subsection{Checking Real-Time Availability of Charging Slots}
+
+\begin{itemize}
+    \item Integrate with charging station databases or APIs to fetch real-time data on slot availability.
+    \item Display the availability status of each charging station or slot within the app.
+\end{itemize}
+
+
+\subsection{Reserving Charging Slots}
+
+\begin{itemize}
+    \item Allow users to select a preferred charging station and reserve a slot for a specified time period.
+    \item Provide confirmation of the reservation and display relevant details such as location, time, and cost.
+
+\end{itemize}
+
+\subsection{Payment}
+
+\begin{itemize}
+    \item chargeEase will integrate a secure payment system to facilitate transactions for parking reservations. Users will be able to make payments seamlessly through the app using various payment methods.
+\end{itemize}
+
+\subsection{Providing a User Friendly Interface}
+\begin{itemize}
+    \item Design a visually appealing and intuitive interface with easy navigation.
+    \item Use clear and concise language to guide users through the app's features and functionalities.
+\end{itemize}
+
+\subsection{Implementing Secure Authentication and Authorization Mechanisms}
+\begin{itemize}
+    \item Require users to sign in with credentials or use biometric authentication to access the app.
+    \item Employ encryption protocols to protect user data and secure communication channels.
+\end{itemize}
+
+\subsection{Encouraging Community Engagement}
+\begin{itemize}
+    \item Incorporate features for users to share their charging experiences, ratings, and reviews.
+    \item Facilitate communication and interaction among users through forums, chat rooms, or social media integration.
+    \item Offer incentives or rewards for active participation and contribution to the community.
+\end{itemize}
+
+
+
+
+\section{Non - Functional Requirements}
+
+    \subsection{Performance Requirements}
+    \begin{itemize}
+        \item \textbf{Response Time :} The application must respond to user interactions, such as locating nearby charging stations, checking real-time availability, and reserving charging slots, within a reasonable time frame (e.g., less than 2 seconds).
+
+        \item \textbf{Loading Time :} The application must load and display data, such as charging station information and availability, within a reasonable time frame (e.g., less than 5 seconds).
+
+        \item \textbf{Transaction Processing Time :}The application must process payment transactions for charging sessions within a reasonable time frame (e.g., less than 10 seconds).
+
+        \item \textbf{Network Latency : }The application must minimize network latency when communicating with external systems, such as charging station databases and payment gateways, to ensure a smooth and responsive user experience.
+        
+        \item \textbf{Battery Consumption : }The application must minimize battery consumption to ensure prolonged usage without draining the device's battery excessively.
+
+        \item \textbf{Memory Usage :} The application must optimize memory usage to ensure efficient performance and prevent crashes or slowdowns due to memory constraints.
+        
+    \end{itemize}
+
+    \subsection{Security Requirements}
+    \begin{itemize}
+        \item \textbf{Authentication : } The application must authenticate users securely, using strong encryption and secure communication protocols.
+        \item \textbf{Authorization : } The application must authorize users to access specific features and data based on their roles and permissions.
+        \item \textbf{Data Protection : } The application must protect user data and payment information using encryption and secure storage mechanisms.
+        \item \textbf{Secure Communication : } The application must use secure communication protocols, such as HTTPS, to protect data transmitted between the app and external systems.
+        \item \textbf{Payment Security : } The application must use a secure payment gateway to process payments for charging sessions.
+        \item \textbf{Compilance : } The application must comply with relevant security standards and regulations, such as PCI DSS for payment processing.
+
+        
+    \end{itemize}
+
+    \subsection{Software Quality Requirements :}
+\begin{itemize}
+    \item Reliability: The system should ensure accurate and reliable real-time updates on job openings and eligibility criteria. The platform should have minimal downtime to ensure constant availability for both PC coordinators and students.
+    \item Usability: The user interface should be intuitive and user-friendly for both PC coordinators and students. Navigation should be straightforward, and features should be easily accessible to enhance overall user experience.
+    \item Security: The platform should implement robust security measures to protect sensitive information such as student profiles and eligibility criteria. Authentication and authorization mechanisms should be in place to ensure data privacy and prevent unauthorized access.
+    \item Performance: The platform should have fast response times, especially during peak usage periods, to provide a smooth experience for users. The AI tool's resume analysis should be efficient, providing quick and accurate results..
+    \item Integration with AI Services: The AI tool's integration should be seamless, ensuring accurate and efficient analysis of student resumes. Compatibility with various AI services and frameworks should be considered for future enhancements.
+\end{itemize}
+These software quality attributes aim to ensure that the Easy Hire platform is not only functional but also reliable, secure, and user-friendly for both administrators and end-users.
+
+    \subsection{Other Requirements}
+    chargeEase is a dynamic platform that requires ongoing maintenance due to its continuous evolution. Refactoring is essential to keep the codebase efficient and adaptable to changing needs. Given the dynamic nature of the cultural field, requirements may evolve, necessitating flexibility in the software architecture. Regular updates and responsiveness to changing user demands are crucial for the sustained success of chargeEase.
+
+\chapter{Future Scope}
+\subsection{Future Scope}
+
+
+
+
+
+  \end{document}
