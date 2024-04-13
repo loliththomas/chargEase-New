@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:chargeease_demo/screens/loginScreen.dart';
+import 'package:chargeease_demo/screens/dataentryScreen.dart';
 
 class OtpScreen extends StatefulWidget {
   final String phoneNumber;
@@ -113,6 +114,9 @@ class _OtpScreenState extends State<OtpScreen> {
                             onPressed: () {
                               _otp.length == 4 ? _verifyOtp : null;
                               print("verify pressed");
+                              Navigator.push(context, 
+                              MaterialPageRoute(builder: (context) =>DataEntryScreen())
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
