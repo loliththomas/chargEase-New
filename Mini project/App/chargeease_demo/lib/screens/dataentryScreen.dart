@@ -27,7 +27,7 @@ class DataEntryScreen extends StatelessWidget {
               Image.asset(
                 'assets/images/detail.png',
                 height: 200,
-                width: 220,
+                width: 250,
               ),
 
               SizedBox(height: 10.0), // Add spacing
