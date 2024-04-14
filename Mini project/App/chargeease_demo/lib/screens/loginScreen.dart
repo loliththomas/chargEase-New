@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chargeease_demo/screens/OtpScreen.dart';
+import 'dart:math';
+
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -9,9 +11,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   // Error message display state
   String _phoneNumberError = '';
-
-  final _formKey =
-      GlobalKey<FormState>(); // State management for form validation
+  late int _otp;
+  final _formKey =GlobalKey<FormState>(); // State management for form validation
   final _phoneController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -70,14 +71,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: 36,
                           child: ElevatedButton(
                             onPressed: () {
+
                               // Get the phone number
                               String phoneNumber = _phoneController.text;
 
+                              //Generating otp
+                              _otp=Random().nextInt(900000)+100000;
+                              print("OTP is  $_otp");
                               // Perform validation
                               if (phoneNumber.isEmpty) {
                                 setState(() {
-                                  _phoneNumberError =
-                                      'Phone number is required.';
+                                  _phoneNumberError ='Phone number is required.';
                                 });
                                 return; // Prevent further action if empty
                               } else if (phoneNumber.length < 10) {
@@ -93,7 +97,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 _phoneNumberError = ''; // Clear error if valid
                               });
                               Navigator.push(context, 
-                              MaterialPageRoute(builder: (context) =>OtpScreen(phoneNumber: phoneNumber,))
+                              MaterialPageRoute(builder: (context) =>OtpScreen(
+                                phoneNumber: phoneNumber,
+                                otp: 123456  /*_otp*/,)
+                                )
                               );
                               // Implement your actual login functionality here, potentially using phoneNumber
                               // ...

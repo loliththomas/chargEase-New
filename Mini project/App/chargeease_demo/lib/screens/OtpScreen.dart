@@ -5,18 +5,31 @@ import 'package:chargeease_demo/screens/dataentryScreen.dart';
 
 class OtpScreen extends StatefulWidget {
   final String phoneNumber;
-  OtpScreen({required this.phoneNumber});
+  final int otp;
+  OtpScreen({required this.phoneNumber,required  this.otp});
   
   @override
   _OtpScreenState createState() => _OtpScreenState();
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-  String _otp = ""; // To store the entered OTP
+  String  _otp='' ; // To store the entered OTP
+  final _formKey = GlobalKey<FormState>();
 
   void _verifyOtp() {
-    // Implement your verification logic here
-    // e.g., call an API to validate the OTP entered by the user
+   if(int.parse(_otp)== widget.otp){
+    // otp matched
+    print('otp matched');
+     Navigator.push(context, 
+     MaterialPageRoute(builder: (context)=> DataEntryScreen(phoneNumber: widget.phoneNumber)),
+     );
+   }
+   else{
+        print('otp missmatch');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("OTP does not match"),
+        ));
+   }
     print("Verifying OTP: $_otp");
   }
 
@@ -61,24 +74,35 @@ class _OtpScreenState extends State<OtpScreen> {
               SizedBox(height: 20.0),
 
               // Text Field for OTP
-              TextField(
-                keyboardType: TextInputType.number,
-                maxLength: 6,
-                decoration: InputDecoration(
-                  labelText: 'OTP',
-                  counterText: "",
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0xD9D9D9)
-
-                    )
+              Form(
+                key: _formKey,
+                child: Container(
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    maxLength: 6,
+                    decoration: InputDecoration(
+                      labelText: 'OTP',
+                      counterText: "",
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xD9D9D9)
+                  
+                        )
+                      ),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _otp = value;
+                      });
+                    },
+                    validator:(value) {
+                      if (value == null || value.isEmpty){
+                        return "OTP required";
+                      }
+                      return null;
+                    },
                   ),
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    _otp = value;
-                  });
-                },
               ),
               SizedBox(height: 10.0),
 
@@ -112,11 +136,8 @@ class _OtpScreenState extends State<OtpScreen> {
                           height: 40,
                           child: ElevatedButton(
                             onPressed: () {
-                              _otp.length == 4 ? _verifyOtp : null;
-                              print("verify pressed");
-                              Navigator.push(context, 
-                              MaterialPageRoute(builder: (context) =>DataEntryScreen(phoneNumber: widget.phoneNumber,))
-                              );
+                              _formKey.currentState!.validate();
+                              _verifyOtp();
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
