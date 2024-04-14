@@ -115,7 +115,7 @@ class _OtpScreenState extends State<OtpScreen> {
                               _otp.length == 4 ? _verifyOtp : null;
                               print("verify pressed");
                               Navigator.push(context, 
-                              MaterialPageRoute(builder: (context) =>DataEntryScreen())
+                              MaterialPageRoute(builder: (context) =>DataEntryScreen(phoneNumber: widget.phoneNumber,))
                               );
                             },
                             style: ElevatedButton.styleFrom(

@@ -30,12 +30,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  intl: ^0.17.0
 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  google_fonts: ^6.1.0
+  google_fonts: 6.1.0
   flutter_native_splash: ^2.3.11
   flutter_lints: ^3.0.1
 
@@ -104,9 +105,9 @@ flutter:
     - assets/images/google.png
     - assets/images/detail.png
 
-  #fonts:
-   # - family: Audiowide
-    #  fonts:
-     #   - asset: fonts/Audiowide-Regular.ttf
-      #    weight: 700
+  fonts:
+    - family: Audiowide
+      fonts:
+        - asset: fonts/Audiowide-Regular.ttf
+          weight: 700
 
