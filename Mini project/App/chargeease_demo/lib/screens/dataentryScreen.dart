@@ -26,12 +26,12 @@ class _DataEntryScreenState extends State<DataEntryScreen>
     super.initState();
     super.initState();
     _controller = AnimationController(
-      duration: Duration(milliseconds: 300),
+      duration: Duration(milliseconds: 100),
       vsync: this,
     );
     _offsetAnimation = Tween<Offset>(
       begin: Offset.zero,
-      end: const Offset(0.0, 0.05),
+      end: const Offset(0.0, 0.10),
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInOut,
