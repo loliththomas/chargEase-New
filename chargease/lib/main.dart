@@ -1,9 +1,15 @@
 import 'package:chargease/screens/OpeningScreen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 /*import 'package:chargease/screens/loginScreen.dart';*/
 import 'package:flutter/material.dart';
 
-void main(){
-  
+void main() async{
+  // Initialize Firebase before running the app
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 
 } 

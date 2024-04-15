@@ -59,4 +59,5 @@ class DefaultFirebaseOptions {
     projectId: 'chargease-887fc',
     storageBucket: 'chargease-887fc.appspot.com',
   );
+
 }
