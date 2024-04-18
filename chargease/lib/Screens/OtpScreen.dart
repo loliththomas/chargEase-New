@@ -1,42 +1,51 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:chargease/screens/loginScreen.dart';
 import 'package:chargease/screens/dataentryScreen.dart';
+import 'dart:developer';
+//import "package:twilio_flutter/twilio_flutter.dart";
 
 class OtpScreen extends StatefulWidget {
   final String phoneNumber;
-  final int otp;
   final String verificationId;
-  OtpScreen({required this.phoneNumber, required this.otp,required this.verificationId});
+  OtpScreen(
+      {required this.phoneNumber,
+      required this.verificationId});
 
   @override
   _OtpScreenState createState() => _OtpScreenState();
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-  String _otp = ''; // To store the entered OTP
+  
   final _formKey = GlobalKey<FormState>();
-
-  void _verifyOtp() {
+  TextEditingController otpController = TextEditingController();
+  /*final TwilioFlutter twilioFlutter = TwilioFlutter(
+    accountSid: 'ACce02ab038ea9e7e0b1a4e609ae9036ec',
+    authToken: 'daabf1343c415668a96081bf38606282',
+    twilioNumber: '+16562315231',
+  );
+   void _verifyOtp() {
     if (_otp == widget.otp.toString()) {
       // OTP matched
       print('OTP matched');
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => DataEntryScreen(phoneNumber: widget.phoneNumber)),
+        MaterialPageRoute(
+            builder: (context) =>
+                DataEntryScreen(phoneNumber: widget.phoneNumber)),
       );
     } else {
       // OTP mismatched
       print('OTP mismatch');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("OTP does not match"),
-      ));
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.all(20.0),
@@ -79,20 +88,16 @@ class _OtpScreenState extends State<OtpScreen> {
                 key: _formKey,
                 child: Container(
                   child: TextFormField(
+                    controller: otpController,
                     keyboardType: TextInputType.number,
                     maxLength: 6,
                     decoration: InputDecoration(
-                      labelText: 'OTP',
+                      labelText: 'Enter OTP',
                       counterText: "",
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Color(0xD9D9D9)),
                       ),
                     ),
-                    onChanged: (value) {
-                      setState(() {
-                        _otp = value;
-                      });
-                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "OTP required";
@@ -110,7 +115,10 @@ class _OtpScreenState extends State<OtpScreen> {
                 children: [
                   TextButton(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: ((context) => LoginScreen())));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: ((context) => LoginScreen())));
                       // Handle Change Number click
                     },
                     child: Text('Change Number'),
@@ -118,7 +126,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   SizedBox(),
                   TextButton(
                     onPressed: () {
-                      // Handle resend otp
+                      //     twilioFlutter.sendSMS(toNumber: widget.phoneNumber, messageBody: 'Hi, $_otp is your OTP for chargEase App.Please don\'t share this with anyone');// Handle resend otp
                     },
                     child: Text('Resend OTP'),
                   ),
@@ -135,14 +143,36 @@ class _OtpScreenState extends State<OtpScreen> {
                       width: 110,
                       height: 40,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            _verifyOtp();
+                            try {
+                              PhoneAuthCredential credential =
+                                  await PhoneAuthProvider.credential(
+                                      verificationId: widget.verificationId,
+                                      smsCode: otpController.text.toString());
+                              FirebaseAuth.instance
+                                  .signInWithCredential(credential)
+                                  .then((value) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DataEntryScreen(
+                                          phoneNumber: widget.phoneNumber)),
+                                );
+                              });
+                            } catch (e) {
+                              log(e.toString());
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text("OTP does not match"),
+                              ));
+                            }
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(0, 255, 255, 255),
-                        ),// Transparent background to ensure gradient shows
+                          backgroundColor:
+                              const Color.fromARGB(0, 255, 255, 255),
+                        ), // Transparent background to ensure gradient shows
                         child: Text(
                           'Verify',
                           style: TextStyle(

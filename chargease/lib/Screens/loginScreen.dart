@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:chargease/screens/OtpScreen.dart';
 import 'dart:math';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -13,8 +14,8 @@ class _LoginScreenState extends State<LoginScreen> {
   late String verificationId; // Declare verificationId here
   late int _otp;
   final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  String? phoneNumber; // Declare phoneNumber variable
 
   @override
   Widget build(BuildContext context) {
@@ -29,18 +30,23 @@ class _LoginScreenState extends State<LoginScreen> {
             children: <Widget>[
               Image.asset('assets/images/logo_name.png'),
               SizedBox(height: 20.0),
-              TextFormField(
-                keyboardType: TextInputType.phone,
-                controller: _phoneController,
-                maxLength: 13, // Adjust the length according to E.164 format
+              IntlPhoneField(
                 decoration: InputDecoration(
-                  labelText: 'Phone Number (+CountryCodeXXXXXXXXX)',
+                  labelText: 'Phone Number',
                   counterText: "",
-                  prefixIcon: Icon(Icons.phone),
+                  border: OutlineInputBorder(),
                   errorText: _phoneNumberError.isNotEmpty
                       ? _phoneNumberError
                       : null,
                 ),
+                initialCountryCode: 'IN',
+                onChanged: (phone) {
+                  setState(() {
+                    // Update phone number whenever it changes
+                    phoneNumber = phone.completeNumber;
+                    print(phoneNumber) ;// Add phone number to variable
+                  });
+                },
               ),
               SizedBox(height: 40.0),
               Container(
@@ -52,16 +58,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 36,
                       child: ElevatedButton(
                         onPressed: () {
-                          String phoneNumber = _phoneController.text;
-                          _otp = Random().nextInt(900000) + 100000;
-                          print("OTP is $_otp");
-
-                          if (phoneNumber.isEmpty) {
+                          String? enteredPhoneNumber = phoneNumber; // Get entered phone number
+                          if (enteredPhoneNumber == null || enteredPhoneNumber.isEmpty) {
                             setState(() {
                               _phoneNumberError = 'Phone number is required.';
                             });
                             return;
-                          } else if (!_isValidPhoneNumber(phoneNumber)) {
+                          } else if (!_isValidPhoneNumber(enteredPhoneNumber)) {
                             setState(() {
                               _phoneNumberError = 'Invalid phone number format.';
                             });
@@ -72,20 +75,23 @@ class _LoginScreenState extends State<LoginScreen> {
                             _phoneNumberError = '';
                           });
 
+                          _otp = Random().nextInt(900000) + 100000;
+                          print("OTP is $_otp");
+
                           // Send OTP to the user's phone number
                           _auth.verifyPhoneNumber(
-                            phoneNumber: phoneNumber,
+                            phoneNumber: enteredPhoneNumber,
                             verificationCompleted: (PhoneAuthCredential credential) {},
                             verificationFailed: (FirebaseAuthException e) {},
                             codeSent: (String vId, int? resendToken) {
                               verificationId = vId; // Assign verificationId here
                               Navigator.push(
-                                context,
+                                context, 
                                 MaterialPageRoute(
                                   builder: (context) => OtpScreen(
                                     verificationId: verificationId,
-                                    phoneNumber: phoneNumber,
-                                    otp: 123456/*_otp*/,
+                                    phoneNumber: enteredPhoneNumber,
+                                    
                                   ),
                                 ),
                               );
@@ -176,7 +182,3 @@ class _LoginScreenState extends State<LoginScreen> {
     return false;
   }
 }
-
-
-
-//currently firebase il oru testingin vendi my num kodthitund + verification code set to 123456
