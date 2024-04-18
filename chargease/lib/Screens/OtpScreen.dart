@@ -21,26 +21,7 @@ class _OtpScreenState extends State<OtpScreen> {
   
   final _formKey = GlobalKey<FormState>();
   TextEditingController otpController = TextEditingController();
-  /*final TwilioFlutter twilioFlutter = TwilioFlutter(
-    accountSid: 'ACce02ab038ea9e7e0b1a4e609ae9036ec',
-    authToken: 'daabf1343c415668a96081bf38606282',
-    twilioNumber: '+16562315231',
-  );
-   void _verifyOtp() {
-    if (_otp == widget.otp.toString()) {
-      // OTP matched
-      print('OTP matched');
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                DataEntryScreen(phoneNumber: widget.phoneNumber)),
-      );
-    } else {
-      // OTP mismatched
-      print('OTP mismatch');
-    }
-  }*/
+  
 
   @override
   Widget build(BuildContext context) {
@@ -125,9 +106,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   ),
                   SizedBox(),
                   TextButton(
-                    onPressed: () {
-                      //     twilioFlutter.sendSMS(toNumber: widget.phoneNumber, messageBody: 'Hi, $_otp is your OTP for chargEase App.Please don\'t share this with anyone');// Handle resend otp
-                    },
+                    onPressed: () {                    },
                     child: Text('Resend OTP'),
                   ),
                 ],
