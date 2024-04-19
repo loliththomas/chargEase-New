@@ -1,3 +1,5 @@
+import 'package:chargease/Screens/homeScreen.dart';
+import 'package:chargease/Screens/searchScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -266,6 +268,7 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                       child: ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
                             // If all fields are valid, perform the desired action
                             // For example, navigate to the next screen
                             print("not all entries");
