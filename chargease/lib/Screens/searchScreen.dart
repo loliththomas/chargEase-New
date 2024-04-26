@@ -30,18 +30,19 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'chargeEase',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 28,
-            fontFamily: 'Audiowide',
-            fontWeight: FontWeight.normal,
-          ),
-        ),
+      appBar:AppBar(
         backgroundColor: Color.fromARGB(255, 247, 250, 248),
-      ),
+        elevation: 3,
+        shadowColor: Colors.grey,
+        title: Text('chargeEase',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontFamily: 'Audiowide',
+                  fontWeight: FontWeight.normal,
+                )
+              )
+          ),
       body: SingleChildScrollView(
         // Enables scrolling
         child: Column(
@@ -117,25 +118,37 @@ class _SearchScreenState extends State<SearchScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Color.fromARGB(255, 40, 154, 169), // Adjust color as needed
-        onTap: _onItemTapped,
-      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey,
+              blurRadius: 5.0,
+              spreadRadius: 3,
+              offset: Offset(0,3)
+            )
+          ]
+        ),
+        child: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search),
+              label: 'Search',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Color.fromARGB(255, 40, 154, 169), // Adjust color as needed
+          onTap: _onItemTapped,
+        )
+        ),
     );
   }
 }

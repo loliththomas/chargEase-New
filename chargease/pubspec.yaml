@@ -44,11 +44,11 @@ dependencies:
   cloud_firestore: ^4.15.8
   firebase_analytics: ^10.8.9
   google_sign_in: ^6.1.6
-  
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
+#testing is commented
+#dev_dependencies:
+#  flutter_test:
+#    sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -105,7 +105,12 @@ flutter:
     - assets/images/google.png
     - assets/images/detail.png
     - assets/images/logoMain.png
-    - 'assets/images/station.jpg'
+    - assets/images/station1.jpeg 
+    - assets/images/station2.jpg 
+    - assets/images/station3.jpg 
+    - assets/images/station4.jpg 
+    - assets/images/station.jpg 
+  
 
   fonts:
     - family: Audiowide

@@ -268,7 +268,7 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                       child: ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => homeScreen()));
                             // If all fields are valid, perform the desired action
                             // For example, navigate to the next screen
                             print("not all entries");
