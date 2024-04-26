@@ -1,15 +1,39 @@
+import 'dart:async';
+import 'package:geolocator/geolocator.dart';
 import 'package:chargease/Screens/homeScreen.dart';
 import 'package:chargease/Screens/profileScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
-
+  late CameraPosition _initialPosition;
 class _SearchScreenState extends State<SearchScreen> {
   int _selectedIndex = 1; // For navigation bar selection
+  late Position _currentPosition;
 
+  @override
+  void initState(){
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  _getCurrentLocation() async{
+    try{
+      Position position=await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      setState(() {
+        _currentPosition=position;
+        _initialPosition=CameraPosition(target: LatLng(_currentPosition.latitude,_currentPosition.longitude),zoom: 14);
+
+      });
+    }catch(e){
+      print('error $e');
+    }
+  }
+
+  final Completer<GoogleMapController> _controller=Completer();
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -17,7 +41,7 @@ class _SearchScreenState extends State<SearchScreen> {
     });
     if (_selectedIndex == 0) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => homeScreen()));
-    }
+    }  
     else if (_selectedIndex == 1) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
     }
@@ -63,22 +87,20 @@ class _SearchScreenState extends State<SearchScreen> {
 
             // Map container to display stations
             Container(
-              height: 300.0, // Adjust height as needed
+              height: 400.0, // Adjust height as needed
               child: Stack(
                 children: [
+                  GoogleMap(initialCameraPosition: _initialPosition,
+                  onMapCreated: (GoogleMapController controller ){
+                    _controller.complete(controller);
+                  },
+                  myLocationEnabled: true,
+                  )
+
                   // Placeholder for your map widget (e.g., Google Maps)
                   // ... replace with your map implementation
-                  Center(
-                    child: Text('Map Here'), // Placeholder for now
-                  ),
-                  Positioned(
-                    bottom: 20.0,
-                    right: 20.0,
-                    child: FloatingActionButton(
-                      onPressed: () {}, // Handle "Locate Me" button press
-                      child: Icon(Icons.location_on),
-                    ),
-                  ),
+                 ,
+                 
                 ],
               ),
             ),
@@ -101,20 +123,20 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
 
-            // List of stations (replace with actual data fetching)
+           /* // List of stations (replace with actual data fetching)
             ListView.builder(
               shrinkWrap: true, // Makes list content fit its size
               physics: NeverScrollableScrollPhysics(), // Disable list scrolling
-              itemCount: 4, // Replace with number of stations
+              itemCount: 2, // Replace with number of stations
               itemBuilder: (context, index) {
-                return ListTile(
+                return ListTile(  
                   leading: Icon(Icons.electric_car),
                   title: Text('Station Name ${index + 1}'),
                   subtitle: Text('9.30 Ramapuram'), // Replace with distance or other details
                   trailing: Icon(Icons.arrow_forward_ios),
                 );
               },
-            ),
+            ),*/
           ],
         ),
       ),

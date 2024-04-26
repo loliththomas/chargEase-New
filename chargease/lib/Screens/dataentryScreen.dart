@@ -1,9 +1,12 @@
+//import 'package:chargease/Screens/searchScreen.dart';
 import 'package:chargease/Screens/homeScreen.dart';
-import 'package:chargease/Screens/searchScreen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-
+import 'package:intl_phone_field/phone_number.dart';
+import 'package:chargease/widgets/GenderButtonWidget.dart';
 
 class DataEntryScreen extends StatefulWidget {
   final String phoneNumber;
@@ -17,16 +20,22 @@ class DataEntryScreen extends StatefulWidget {
 class _DataEntryScreenState extends State<DataEntryScreen>
     with TickerProviderStateMixin {
   String selectedGender = "male";
+  String? userExist='n';
   String? _errorMessage;
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
   final _formKey = GlobalKey<FormState>();
   DateTime? _selectedDate;
+  Map<String, dynamic>? userData;
+  //texteditingcontrollers
+  final nameController = TextEditingController();
+  //final mobileController = TextEditingController();
+  final emailController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    super.initState();
+    checkUserData(widget.phoneNumber);
     _controller = AnimationController(
       duration: Duration(milliseconds: 300),
       vsync: this,
@@ -46,32 +55,40 @@ class _DataEntryScreenState extends State<DataEntryScreen>
     super.dispose();
   }
 
-  // Reusable button for gender selection (separate function)
-  Widget _buildGenderButton(String gender) {
-    Color buttonColor = selectedGender == gender
-        ? Color.fromARGB(255, 27, 173, 193)
-        : Colors.grey; // Set button color based on selection
-    return SizedBox(
-      width: 95,
-      height: 30,
-      child: OutlinedButton(
-        onPressed: () {
-          setState(() {
-            selectedGender = gender; // Update selected gender on button press
-          });
-        },
-        child: Text(
-          gender,
-          style: TextStyle(fontSize: 14),
-        ),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: buttonColor,
-          side: BorderSide(
-            color: Color.fromARGB(255, 115, 111, 111),
-          ), // Set text color based on selection
-        ),
-      ),
-    );
+//Funtion to check if the user is already existing
+
+  Future<void> checkUserData(String phoneNumber) async {
+    try {
+      // Reference to the Firestore collection
+      CollectionReference users = FirebaseFirestore.instance.collection('User');
+
+      // Query to check if a document with the given phone number exists
+      QuerySnapshot querySnapshot =
+          await users.where('phoneNumber', isEqualTo: phoneNumber).get();
+
+      // Check if any documents were found
+      if (querySnapshot.docs.isNotEmpty) {
+        // Extract data from the first document found (assuming phone numbers are unique)
+        Map<String, dynamic> userData =
+            querySnapshot.docs.first.data() as Map<String, dynamic>;
+        print('user found $userData');
+        setState(() {
+          userExist='y';
+          print("user exist variable : $userExist");
+        });
+
+        //return userData;
+      } else {
+        print("${widget.phoneNumber} user not found");
+
+        // If no documents were found, return null
+        //return null;
+      }
+    } catch (e) {
+      // Handle any errors
+      print("Error fetching user data: $e");
+      //return null;
+    }
   }
 
 // Function to show date picker dialog
@@ -140,6 +157,7 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: TextFormField(
+                          controller: nameController,
                           decoration: InputDecoration(
                             labelText: '*Full Name',
                             border: OutlineInputBorder(),
@@ -157,6 +175,7 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: TextFormField(
                           initialValue: widget.phoneNumber,
+                          //controller: mobileController,
                           decoration: InputDecoration(
                             labelText: '*Phone Number',
                             border: OutlineInputBorder(),
@@ -171,11 +190,12 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                               TextStyle(fontSize: 16.0), // Adjust the font size
                         ),
                       ),
-                       Padding(
+                      Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: TextFormField(
+                          controller: emailController,
                           decoration: InputDecoration(
-                            labelText: '*Email ID',
+                            labelText: '*E-mail ID',
                             border: OutlineInputBorder(),
                             prefixIcon: Icon(Icons.email),
                             contentPadding: EdgeInsets.symmetric(
@@ -248,9 +268,39 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                   // Distribute buttons evenly
                   children: [
                     Icon(Icons.wc),
-                    _buildGenderButton('Male'),
-                    _buildGenderButton('Female'),
-                    _buildGenderButton('Other'),
+                    GenderButton(
+                      gender: 'Male',
+                      selectedGender:
+                          selectedGender, // Pass the selected gender here
+                      onPressed: (gender) {
+                        setState(() {
+                          selectedGender =
+                              gender; // Assign the selected gender to selectedGender
+                        });
+                      },
+                    ),
+                    GenderButton(
+                      gender: 'Female',
+                      selectedGender:
+                          selectedGender, // Pass the selected gender here
+                      onPressed: (gender) {
+                        setState(() {
+                          selectedGender =
+                              gender; // Assign the selected gender to selectedGender
+                        });
+                      },
+                    ),
+                    GenderButton(
+                      gender: 'Other',
+                      selectedGender:
+                          selectedGender, // Pass the selected gender here
+                      onPressed: (gender) {
+                        setState(() {
+                          selectedGender =
+                              gender; // Assign the selected gender to selectedGender
+                        });
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -268,11 +318,50 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                       child: ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => homeScreen()));
-                            // If all fields are valid, perform the desired action
-                            // For example, navigate to the next screen
-                            print("not all entries");
+                            // Validate form fields
+
+                            // Check if user data exists
+                            if (userExist=='y') {
+                              print(
+                                  "User already exists, skipping data write.");
+                              // Navigate to home screen without writing data
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => homeScreen()),
+                              );
+                            } else {
+                              // Write data to Firestore
+                              try {
+                                CollectionReference collRef = FirebaseFirestore
+                                    .instance
+                                    .collection("User");
+                                collRef.add({
+                                  'Name': nameController.text,
+                                  'Email': emailController.text,
+                                  'DOB': _selectedDate != null
+                                      ? DateFormat('yyyy-MM-dd')
+                                          .format(_selectedDate!)
+                                      : null,
+                                  'Gender': selectedGender,
+                                  'phoneNumber': widget.phoneNumber
+                                }).then((value) {
+                                  print('Data stored successfully');
+                                  // Navigate to home screen after data is written
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => homeScreen()),
+                                  );
+                                }).catchError((error) {
+                                  print('Error storing data: $error');
+                                });
+                              } catch (error) {
+                                print('Error storing data: $error');
+                              }
+                            }
                           } else {
+                            // If form fields are not valid, show error message
                             setState(() {
                               _errorMessage = "Fill all required fields";
                               _controller!.forward(from: 0);
@@ -283,25 +372,22 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                             _controller.forward(from: 0);
                           }
                         },
-                        child: Text('Continue',
-                        style: TextStyle(
-                          color: Colors.white
-                        ),
+                        child: Text(
+                          'Continue',
+                          style: TextStyle(color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                    const Color.fromARGB(0, 255, 255, 255),
-                                // Transparent background to ensure gradient shows
-                            ),
+                          backgroundColor:
+                              const Color.fromARGB(0, 255, 255, 255),
+                          // Transparent background to ensure gradient shows
+                        ),
                       ),
                     ),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors:[
-                          Color.fromARGB(255, 63, 159, 172),
-                          Color.fromARGB(255, 38, 123, 233)
-                        ] )
-                    ),
+                        gradient: LinearGradient(colors: [
+                      Color.fromARGB(255, 63, 159, 172),
+                      Color.fromARGB(255, 38, 123, 233)
+                    ])),
                   ),
                 ),
               )
