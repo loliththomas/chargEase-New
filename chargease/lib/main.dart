@@ -1,46 +1,53 @@
 import 'package:chargease/screens/OpeningScreen.dart';
+import 'package:chargease/Screens/homeScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'firebase_options.dart';
 /*import 'package:chargease/screens/loginScreen.dart';*/
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() async{
-  // Initialize Firebase before running the app
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
   await Permission.location.request();
+  final PermissionStatus status =await Permission.location.request();
+  // Check if the user is already logged in
+  bool isLoggedIn = await checkUserLoggedIn(); // Implement this function to check user login state
+  print('login Sate : $isLoggedIn');
+  if(status==PermissionStatus.denied){
+    runApp(MyApp(isLoggedIn: isLoggedIn,showPermissionRequiredSnackBar: true));
+  }else{
+    runApp(MyApp(isLoggedIn: isLoggedIn,showPermissionRequiredSnackBar: false));
 
-  // Request location permission
-final PermissionStatus status = await Permission.location.request();
-
-if (status == PermissionStatus.denied) {
-    // Show a SnackBar to inform the user about the importance of location access
-    runApp(MyApp(showPermissionRequiredSnackBar: true));
-  } else {
-    runApp(const MyApp(showPermissionRequiredSnackBar: false));
   }
   
+}
 
-} 
+Future<bool> checkUserLoggedIn() async {
+  FirebaseAuth auth = FirebaseAuth.instance;
+  User? user = auth.currentUser;
+  return user != null;
+}
 
 class MyApp extends StatelessWidget {
+  final bool isLoggedIn;
   final bool showPermissionRequiredSnackBar;
 
-  const MyApp({Key? key, required this.showPermissionRequiredSnackBar}) : super(key: key);
+  const MyApp({Key? key, required this.isLoggedIn,required this.showPermissionRequiredSnackBar}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return MaterialApp(
       theme: ThemeData(
-        scaffoldBackgroundColor: Color.fromARGB(255, 247, 250, 248),
-        primaryColor: Color.fromARGB(255, 48, 136, 208)
-      ),
-    home: OpeningScreen(),
-    builder: (context, child) {
+          scaffoldBackgroundColor: Color.fromARGB(255, 247, 250, 248),
+          primaryColor: Color.fromARGB(255, 48, 136, 208)),
+      home: isLoggedIn ? homeScreen() : OpeningScreen(),
+      builder: (context, child) {
         return showPermissionRequiredSnackBar
             ? Scaffold(
                 body: child,
@@ -56,11 +63,10 @@ class MyApp extends StatelessWidget {
                 ),
               )
             : child!;
+
       },
-      
     );
   }
-
 }
 
 

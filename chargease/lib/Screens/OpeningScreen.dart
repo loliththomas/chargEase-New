@@ -57,7 +57,7 @@ class _OpeningScreenState extends State<OpeningScreen> {
 
   Future<void> gotoLogin() async {
     await Future.delayed(const Duration(seconds: 5));
-    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) {
       // ignore: prefer_const_constructors
       return LoginScreen();
     }));

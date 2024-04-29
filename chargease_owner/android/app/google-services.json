@@ -1,0 +1,76 @@
+{
+  "project_info": {
+    "project_number": "172070907011",
+    "project_id": "chargease-887fc",
+    "storage_bucket": "chargease-887fc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:172070907011:android:6f44ad01bb42ab7455ffb6",
+        "android_client_info": {
+          "package_name": "com.example.chargease"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "172070907011-6eibfdmoh7vvv1tsuhe4oq0ar3ehb6sh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chargease",
+            "certificate_hash": "cfe693a10a501ec8c651cbeaefbcc271d1fe1c69"
+          }
+        },
+        {
+          "client_id": "172070907011-s748pinu1onoabco060pue8030ucf8le.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDekaCrdPAtzN1yYU0Z9_iRh2Ppg2AcPu8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "172070907011-s748pinu1onoabco060pue8030ucf8le.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:172070907011:android:4f9e465c4a1c5b2355ffb6",
+        "android_client_info": {
+          "package_name": "com.example.chargease_owner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "172070907011-s748pinu1onoabco060pue8030ucf8le.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDekaCrdPAtzN1yYU0Z9_iRh2Ppg2AcPu8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "172070907011-s748pinu1onoabco060pue8030ucf8le.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

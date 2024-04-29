@@ -1,5 +1,8 @@
 import 'package:chargease/Screens/homeScreen.dart';
+import 'package:chargease/Screens/loginScreen.dart';
 import 'package:chargease/Screens/searchScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 
 class profileScreen extends StatefulWidget {
@@ -62,8 +65,17 @@ class _profileScreenState extends State<profileScreen> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Implement logout logic here
+               onPressed: () async {
+                // Sign out the user
+                await FirebaseAuth.instance.signOut();
+
+                // Navigate to the login screen
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          LoginScreen()), // Replace LoginScreen() with your actual login screen widget
+                );
               },
               child: Text('Logout'),
             ),

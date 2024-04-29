@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             verificationFailed: (FirebaseAuthException e) {},
                             codeSent: (String vId, int? resendToken) {
                               verificationId = vId; // Assign verificationId here
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context, 
                                 MaterialPageRoute(
                                   builder: (context) => OtpScreen(

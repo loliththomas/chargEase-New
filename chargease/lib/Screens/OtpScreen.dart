@@ -1,8 +1,11 @@
 import 'package:chargease/Screens/dataentryScreen.dart';
+import 'package:chargease/Screens/homeScreen.dart';
 import 'package:chargease/Screens/loginScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'dart:developer';
 
 class OtpScreen extends StatefulWidget {
@@ -19,9 +22,44 @@ class OtpScreen extends StatefulWidget {
 class _OtpScreenState extends State<OtpScreen> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
-
+  Map<String,dynamic>? userData;
+  String userExist='n';
   TextEditingController otpController = TextEditingController();
+//Funtion to check if the user is already existing
 
+  Future<void> checkUserData(String phoneNumber) async {
+    try {
+      // Reference to the Firestore collection
+      CollectionReference users = FirebaseFirestore.instance.collection('Users');
+
+      // Query to check if a document with the given phone number exists
+      QuerySnapshot querySnapshot =
+          await users.where('phoneNumber', isEqualTo: phoneNumber).get();
+
+      // Check if any documents were found
+      if (querySnapshot.docs.isNotEmpty) {
+        // Extract data from the first document found (assuming phone numbers are unique)
+        Map<String, dynamic> userData =
+            querySnapshot.docs.first.data() as Map<String, dynamic>;
+        print('user found $userData');
+        setState(() {
+          userExist='y';
+          print("user exist variable : $userExist");
+        });
+
+        //return userData;
+      } else {
+        print("${widget.phoneNumber} user not found");
+
+        // If no documents were found, return null
+        //return null;
+      }
+    } catch (e) {
+      // Handle any errors
+      print("Error fetching user data: $e");
+      //return null;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return ScaffoldMessenger(
@@ -97,7 +135,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   children: [
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: ((context) => LoginScreen())));
@@ -131,16 +169,29 @@ class _OtpScreenState extends State<OtpScreen> {
                                     await PhoneAuthProvider.credential(
                                         verificationId: widget.verificationId,
                                         smsCode: otpController.text.toString());
-                                FirebaseAuth.instance
-                                   .signInWithCredential(credential)
-                                   .then((value) {
-                                  Navigator.push(
+                                await FirebaseAuth.instance
+                                    .signInWithCredential(credential);
+
+                                await checkUserData(
+                                    widget.phoneNumber); // Check if user exists
+
+                                if (userExist == 'n') {  // if user not exist go to dataentry
+                                  Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => DataEntryScreen(
-                                            phoneNumber: widget.phoneNumber)),
+                                      builder: (context) => DataEntryScreen(
+                                        phoneNumber: widget.phoneNumber,
+                                      ),
+                                    ),
                                   );
-                                });
+                                } else if (userExist == 'y') {  //if user exist directly go to homescreen
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => homeScreen(),
+                                    ),
+                                  );
+                                }
                               } catch (e) {
                                 log(e.toString());
                                 _scaffoldKey.currentState!.showSnackBar(

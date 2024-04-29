@@ -1,11 +1,9 @@
 //import 'package:chargease/Screens/searchScreen.dart';
 import 'package:chargease/Screens/homeScreen.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:intl_phone_field/phone_number.dart';
 import 'package:chargease/widgets/GenderButtonWidget.dart';
 
 class DataEntryScreen extends StatefulWidget {
@@ -325,7 +323,7 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                               print(
                                   "User already exists, skipping data write.");
                               // Navigate to home screen without writing data
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => homeScreen()),
@@ -348,7 +346,7 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                                 }).then((value) {
                                   print('Data stored successfully');
                                   // Navigate to home screen after data is written
-                                  Navigator.push(
+                                  Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => homeScreen()),
@@ -364,7 +362,7 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                             // If form fields are not valid, show error message
                             setState(() {
                               _errorMessage = "Fill all required fields";
-                              _controller!.forward(from: 0);
+                              _controller.forward(from: 0);
                               Future.delayed(Duration(seconds: 3), () {
                                 _controller.reverse();
                               });
