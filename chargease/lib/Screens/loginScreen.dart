@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:chargease/screens/OtpScreen.dart';
+import 'package:flutter/widgets.dart';
 import 'dart:math';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
+  final SharedPreferences prefs; // Add SharedPreferences here
+  LoginScreen({required this.prefs});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -16,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? phoneNumber; // Declare phoneNumber variable
+
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   builder: (context) => OtpScreen(
                                     verificationId: verificationId,
                                     phoneNumber: enteredPhoneNumber,
+                                    prefs: widget.prefs
                                     
                                   ),
                                 ),

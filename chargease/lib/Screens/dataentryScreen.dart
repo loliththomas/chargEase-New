@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:chargease/widgets/GenderButtonWidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class DataEntryScreen extends StatefulWidget {
   final String phoneNumber;
-
-  DataEntryScreen({required this.phoneNumber});
+  final SharedPreferences prefs;
+  DataEntryScreen({required this.phoneNumber,required this.prefs});
 
   @override
   State<DataEntryScreen> createState() => _DataEntryScreenState();
@@ -33,7 +35,7 @@ class _DataEntryScreenState extends State<DataEntryScreen>
   @override
   void initState() {
     super.initState();
-    checkUserData(widget.phoneNumber);
+
     _controller = AnimationController(
       duration: Duration(milliseconds: 300),
       vsync: this,
@@ -55,39 +57,7 @@ class _DataEntryScreenState extends State<DataEntryScreen>
 
 //Funtion to check if the user is already existing
 
-  Future<void> checkUserData(String phoneNumber) async {
-    try {
-      // Reference to the Firestore collection
-      CollectionReference users = FirebaseFirestore.instance.collection('User');
 
-      // Query to check if a document with the given phone number exists
-      QuerySnapshot querySnapshot =
-          await users.where('phoneNumber', isEqualTo: phoneNumber).get();
-
-      // Check if any documents were found
-      if (querySnapshot.docs.isNotEmpty) {
-        // Extract data from the first document found (assuming phone numbers are unique)
-        Map<String, dynamic> userData =
-            querySnapshot.docs.first.data() as Map<String, dynamic>;
-        print('user found $userData');
-        setState(() {
-          userExist='y';
-          print("user exist variable : $userExist");
-        });
-
-        //return userData;
-      } else {
-        print("${widget.phoneNumber} user not found");
-
-        // If no documents were found, return null
-        //return null;
-      }
-    } catch (e) {
-      // Handle any errors
-      print("Error fetching user data: $e");
-      //return null;
-    }
-  }
 
 // Function to show date picker dialog
   Future<void> _selectDate(BuildContext context) async {
@@ -317,23 +287,13 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             // Validate form fields
-
                             // Check if user data exists
-                            if (userExist=='y') {
-                              print(
-                                  "User already exists, skipping data write.");
-                              // Navigate to home screen without writing data
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => homeScreen()),
-                              );
-                            } else {
+                            
                               // Write data to Firestore
                               try {
                                 CollectionReference collRef = FirebaseFirestore
                                     .instance
-                                    .collection("User");
+                                    .collection("Users");
                                 collRef.add({
                                   'Name': nameController.text,
                                   'Email': emailController.text,
@@ -343,13 +303,21 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                                       : null,
                                   'Gender': selectedGender,
                                   'phoneNumber': widget.phoneNumber
-                                }).then((value) {
-                                  print('Data stored successfully');
-                                  // Navigate to home screen after data is written
+                                }).then((DocumentReference document) {
+                                  // Use DocumentReference
+                                  // Get the document ID (UID) of the newly created document
+                                  String docId = document.id;
+
+                                  print(
+                                      'Data stored successfully with document ID: $docId');
+                                  widget.prefs.setString('docId', docId);
+                                  // Navigate to addStationScreen and pass the document ID
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => homeScreen()),
+                                      builder: (context) =>
+                                          homeScreen(prefs: widget.prefs,),
+                                    ),
                                   );
                                 }).catchError((error) {
                                   print('Error storing data: $error');
@@ -358,7 +326,7 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                                 print('Error storing data: $error');
                               }
                             }
-                          } else {
+                           else {
                             // If form fields are not valid, show error message
                             setState(() {
                               _errorMessage = "Fill all required fields";

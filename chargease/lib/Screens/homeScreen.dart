@@ -3,8 +3,13 @@ import 'package:chargease/Screens/searchScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:chargease/widgets/StationButtonWidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class homeScreen extends StatefulWidget {
+    final SharedPreferences prefs; // Add SharedPreferences here
+
+  const homeScreen({required this.prefs});
   @override
   State<homeScreen> createState() => _homeScreenState();
 }
@@ -19,13 +24,13 @@ class _homeScreenState extends State<homeScreen> {
     });
     if (_selectedIndex == 0) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => homeScreen()));
+          context, MaterialPageRoute(builder: (context) => homeScreen(prefs: widget.prefs,)));
     } else if (_selectedIndex == 1) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => SearchScreen()));
+          context, MaterialPageRoute(builder: (context) => SearchScreen(prefs: widget.prefs)));
     } else if (_selectedIndex == 2) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => profileScreen()));
+          context, MaterialPageRoute(builder: (context) => profileScreen(prefs: widget.prefs)));
     }
   }
 

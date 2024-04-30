@@ -4,8 +4,13 @@ import 'package:chargease/Screens/homeScreen.dart';
 import 'package:chargease/Screens/profileScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class SearchScreen extends StatefulWidget {
+      final SharedPreferences prefs; // Add SharedPreferences here
+
+  const SearchScreen({required this.prefs});
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
@@ -40,17 +45,17 @@ class _SearchScreenState extends State<SearchScreen> {
       // Potentially handle navigation logic here (e.g., navigate to other screens)
     });
     if (_selectedIndex == 0) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => homeScreen()));
-    }  
-    else if (_selectedIndex == 1) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => homeScreen(prefs: widget.prefs,)));
+    } else if (_selectedIndex == 1) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SearchScreen(prefs: widget.prefs)));
+    } else if (_selectedIndex == 2) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => profileScreen(prefs: widget.prefs)));
     }
-    else if (_selectedIndex == 2) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => profileScreen()));
-    }
-
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

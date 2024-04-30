@@ -1,19 +1,24 @@
 import 'package:chargease/Screens/dataentryScreen.dart';
 import 'package:chargease/Screens/homeScreen.dart';
 import 'package:chargease/Screens/loginScreen.dart';
+import 'package:chargease/Functions/checkUserData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 import 'dart:developer';
 
 class OtpScreen extends StatefulWidget {
   final String phoneNumber;
   final String verificationId;
+  final SharedPreferences prefs;
   OtpScreen(
       {required this.phoneNumber,
-      required this.verificationId});
+      required this.verificationId,
+      required this.prefs});
 
   @override
   _OtpScreenState createState() => _OtpScreenState();
@@ -25,41 +30,12 @@ class _OtpScreenState extends State<OtpScreen> {
   Map<String,dynamic>? userData;
   String userExist='n';
   TextEditingController otpController = TextEditingController();
-//Funtion to check if the user is already existing
-
-  Future<void> checkUserData(String phoneNumber) async {
-    try {
-      // Reference to the Firestore collection
-      CollectionReference users = FirebaseFirestore.instance.collection('Users');
-
-      // Query to check if a document with the given phone number exists
-      QuerySnapshot querySnapshot =
-          await users.where('phoneNumber', isEqualTo: phoneNumber).get();
-
-      // Check if any documents were found
-      if (querySnapshot.docs.isNotEmpty) {
-        // Extract data from the first document found (assuming phone numbers are unique)
-        Map<String, dynamic> userData =
-            querySnapshot.docs.first.data() as Map<String, dynamic>;
-        print('user found $userData');
-        setState(() {
-          userExist='y';
-          print("user exist variable : $userExist");
-        });
-
-        //return userData;
-      } else {
-        print("${widget.phoneNumber} user not found");
-
-        // If no documents were found, return null
-        //return null;
-      }
-    } catch (e) {
-      // Handle any errors
-      print("Error fetching user data: $e");
-      //return null;
-    }
+    void updateUserExist(bool value){
+    setState(() {
+      userExist='y';
+    });
   }
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldMessenger(
@@ -95,7 +71,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
                 // Text - Enter the otp send to your number
                 Text(
-                  'Enter the OTP sent to +91 ${widget.phoneNumber}',
+                  'Enter the OTP sent to ${widget.phoneNumber}',
                   style: TextStyle(
                     fontSize: 16.0,
                     color: Color.fromARGB(153, 0, 0, 0),
@@ -138,7 +114,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: ((context) => LoginScreen())));
+                                builder: ((context) => LoginScreen(prefs: widget.prefs,))));
                         // Handle Change Number click
                       },
                       child: Text('Change Number'),
@@ -172,32 +148,65 @@ class _OtpScreenState extends State<OtpScreen> {
                                 await FirebaseAuth.instance
                                     .signInWithCredential(credential);
 
-                                await checkUserData(
-                                    widget.phoneNumber); // Check if user exists
+                                String? userId=await checkUserData(
+                                    widget.phoneNumber,updateUserExist); // Check if user exists
+                                widget.prefs.setString('docId', userId ?? '');
+                                print('user id $userId');
+                                print('user exist $userExist');
 
-                                if (userExist == 'n') {  // if user not exist go to dataentry
+
+                                if (userId == null) {  // if user not exist go to dataentry
+                                  print('no user found in db');
+
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => DataEntryScreen(
                                         phoneNumber: widget.phoneNumber,
+                                        prefs: widget.prefs,
                                       ),
                                     ),
                                   );
-                                } else if (userExist == 'y') {  //if user exist directly go to homescreen
+                                } else if (userId ==widget.prefs.getString('docId')) {  //if user exist directly go to homescreen
+                                                                    print('user exists');
+
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => homeScreen(),
+                                      builder: (context) => homeScreen(prefs: widget.prefs,),
                                     ),
                                   );
                                 }
                               } catch (e) {
                                 log(e.toString());
-                                _scaffoldKey.currentState!.showSnackBar(
-                                  SnackBar(
-                                    content: Text("OTP does not match"),
-                                  ),
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      backgroundColor:
+                                          Color.fromARGB(255, 174, 227, 234),
+                                      title: Text(
+                                        'Validation Error',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      content: Text('Enter Correct OTP'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text(
+                                            'OK',
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 );
                               }
                             }

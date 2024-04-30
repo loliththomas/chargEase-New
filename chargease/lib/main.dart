@@ -6,6 +6,8 @@ import 'firebase_options.dart';
 /*import 'package:chargease/screens/loginScreen.dart';*/
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 
 void main() async {
@@ -13,16 +15,18 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  SharedPreferences prefs = await SharedPreferences.getInstance();
 
+  
   await Permission.location.request();
   final PermissionStatus status =await Permission.location.request();
   // Check if the user is already logged in
   bool isLoggedIn = await checkUserLoggedIn(); // Implement this function to check user login state
   print('login Sate : $isLoggedIn');
   if(status==PermissionStatus.denied){
-    runApp(MyApp(isLoggedIn: isLoggedIn,showPermissionRequiredSnackBar: true));
+    runApp(MyApp(isLoggedIn: isLoggedIn,showPermissionRequiredSnackBar: true,prefs:prefs));
   }else{
-    runApp(MyApp(isLoggedIn: isLoggedIn,showPermissionRequiredSnackBar: false));
+    runApp(MyApp(isLoggedIn: isLoggedIn,showPermissionRequiredSnackBar: false,prefs: prefs,));
 
   }
   
@@ -37,8 +41,9 @@ Future<bool> checkUserLoggedIn() async {
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
   final bool showPermissionRequiredSnackBar;
+  final SharedPreferences prefs;
 
-  const MyApp({Key? key, required this.isLoggedIn,required this.showPermissionRequiredSnackBar}) : super(key: key);
+  const MyApp({Key? key, required this.isLoggedIn,required this.showPermissionRequiredSnackBar, required this. prefs}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +51,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           scaffoldBackgroundColor: Color.fromARGB(255, 247, 250, 248),
           primaryColor: Color.fromARGB(255, 48, 136, 208)),
-      home: isLoggedIn ? homeScreen() : OpeningScreen(),
+      home: isLoggedIn ? homeScreen(prefs:prefs) : OpeningScreen(prefs: prefs,),
       builder: (context, child) {
         return showPermissionRequiredSnackBar
             ? Scaffold(

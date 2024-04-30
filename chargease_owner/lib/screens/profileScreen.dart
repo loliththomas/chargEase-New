@@ -1,7 +1,6 @@
 import 'package:chargease_owner/Functions/getUserData.dart';
 import 'package:chargease_owner/Screens/addStationScreen.dart';
 import 'package:chargease_owner/screens/loginScreen.dart';
-import 'package:chargease_owner/screens/maps.dart';
 import 'package:chargease_owner/screens/myStationsScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +17,6 @@ class _profileScreenState extends State<profileScreen> {
   int _selectedIndex = 1; // For navigation bar selection
   late String? userName, email;
 
-
-  
   @override
   void initState() {
     super.initState();
@@ -34,10 +31,16 @@ class _profileScreenState extends State<profileScreen> {
     });
     if (_selectedIndex == 0) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => addStationScreen(prefs:widget.prefs)));
+          context,
+          MaterialPageRoute(
+              builder: (context) => addStationScreen(prefs: widget.prefs)));
     } else if (_selectedIndex == 1) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => profileScreen(prefs: widget.prefs,)));
+          context,
+          MaterialPageRoute(
+              builder: (context) => profileScreen(
+                    prefs: widget.prefs,
+                  )));
     }
   }
 
@@ -75,13 +78,18 @@ class _profileScreenState extends State<profileScreen> {
             ),
             SizedBox(height: 20),
             TextButton(
-  onPressed: () {
-   Navigator.push(context, MaterialPageRoute(builder: (context)=> MyStationsScreen(ownerName: userName)));
-  },
-  child: Text('View my stations '),
-)
-,
-SizedBox(height: 10,),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            MyStationsScreen(ownerName: userName)));
+              },
+              child: Text('View my stations '),
+            ),
+            SizedBox(
+              height: 10,
+            ),
             ElevatedButton(
               onPressed: () async {
                 // Sign out the user
@@ -91,8 +99,9 @@ SizedBox(height: 10,),
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          LoginScreen(prefs:widget.prefs)), // Replace LoginScreen() with your actual login screen widget
+                      builder: (context) => LoginScreen(
+                          prefs: widget
+                              .prefs)), // Replace LoginScreen() with your actual login screen widget
                 );
               },
               child: Text('Logout'),
@@ -127,15 +136,15 @@ SizedBox(height: 10,),
       ),
     );
   }
-  
-  void _getNameMail()async {
-    String? ownerName =await getUserData(widget.prefs.getString('docId'), "Name"); 
-    String? ownerMail =await getUserData(widget.prefs.getString('docId'), "Email"); 
+
+  void _getNameMail() async {
+    String? ownerName =
+        await getUserData(widget.prefs.getString('docId'), "Name");
+    String? ownerMail =
+        await getUserData(widget.prefs.getString('docId'), "Email");
     setState(() {
-      email= ownerMail;
-     userName= ownerName;
-      
+      email = ownerMail;
+      userName = ownerName;
     });
-    
   }
 }
