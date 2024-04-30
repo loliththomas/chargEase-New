@@ -2,9 +2,12 @@
 //import 'package:chargeease_demo/screens/loginDemo.dart';
 import 'package:chargease_owner/screens/loginScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OpeningScreen extends StatefulWidget {
-  const OpeningScreen({Key? key}) : super(key: key);
+  final SharedPreferences prefs; // Add SharedPreferences here
+
+  const OpeningScreen({required this.prefs});
 
   @override
   State<OpeningScreen> createState() => _OpeningScreenState();
@@ -59,7 +62,7 @@ class _OpeningScreenState extends State<OpeningScreen> {
     await Future.delayed(const Duration(seconds: 5));
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) {
       // ignore: prefer_const_constructors
-      return LoginScreen();
+      return LoginScreen(prefs: widget.prefs,);
     }));
   }
 }

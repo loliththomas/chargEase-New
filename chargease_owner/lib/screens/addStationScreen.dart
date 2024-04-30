@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:chargease_owner/Functions/getUserData.dart';
 import 'package:chargease_owner/screens/profileScreen.dart';
 //import 'package:chargease_owner/widgets/LocationInput.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,8 +12,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class addStationScreen extends StatefulWidget {
+  final SharedPreferences prefs; // Add SharedPreferences here
+
+  const addStationScreen({required this.prefs});
   @override
   State<addStationScreen> createState() => _addStationScreenState();
 }
@@ -25,6 +30,9 @@ class _addStationScreenState extends State<addStationScreen> {
   late int? selectedSlots = 1;
   double? _latitude;
   double? _longitude;
+  Map<String, dynamic>? ownerData;
+  String? ownerName;
+  String? ownerNumber;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -39,269 +47,268 @@ class _addStationScreenState extends State<addStationScreen> {
     });
     if (_selectedIndex == 0) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => addStationScreen()));
+          context,
+          MaterialPageRoute(
+              builder: (context) => addStationScreen(
+                    prefs: widget.prefs,
+                  )));
     } else if (_selectedIndex == 1) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => profileScreen()));
+          context,
+          MaterialPageRoute(
+              builder: (context) => profileScreen(
+                    prefs: widget.prefs,
+                  )));
     }
   }
 
-  // void _getCurrentLocation() async {
-  //   Position position = await Geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.high);
-  //   setState(() {
-  //     latitude = position.latitude;
-  //     longitude = position.longitude;
-  //   });
-  // }
-
-  void _addStation() {
+  void _addStation(BuildContext context) {
     String name = stationController.text;
-    int slots = int.parse(slotsController.text);
-    double price = double.parse(priceController.text);
+    int slots = int.tryParse(slotsController.text) ?? 1;
+    double price = double.tryParse(priceController.text) ?? 10;
+    ownerName = getUserData(widget.prefs.getString('docId'), "Name");
+    ownerNumber = getUserData(widget.prefs.getString('docId'), "phoneNumber");
 
-    FirebaseFirestore.instance
-        .collection('user')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.exists) {
-        String? uid =
-            (documentSnapshot.data() as Map<String, dynamic>?)?['uid'];
-        if (uid != null) {
-          return FirebaseFirestore.instance
-              .collection('owners')
-              .where('uid', isEqualTo: uid)
-              .get();
-        } else {
-          throw Exception('UID is null in user document');
-        }
-      } else {
-        throw Exception('User document does not exist');
-      }
-    }).then((QuerySnapshot querySnapshot) {
-      if (querySnapshot.docs.isNotEmpty) {
-        String ownerName =
-            (querySnapshot.docs.first.data() as Map<String, dynamic>?)?['name'];
-        String _phoneNumber = (querySnapshot.docs.first.data()
-            as Map<String, dynamic>?)?['phoneNumber'];
-
-        return Stations.addStation(name, slots, price, _latitude!, _longitude!,
-            ownerName, _phoneNumber);
-      } else {
-        throw Exception('Owner document not found');
-      }
-    }).catchError((error) {
-      print('Error: $error');
-    });
+    Stations.addStation(
+        context,name, slots, price, _latitude!, _longitude!, ownerName, ownerNumber);
 
     //Stations.addStation(name, slots, price, latitude!, longitude!);
   }
 
   @override
   Widget build(BuildContext context) {
-     //_formKey.currentState!.validate();
+    //_formKey.currentState!.validate();
     return Scaffold(
-  resizeToAvoidBottomInset: false,
-  appBar: AppBar(
-    backgroundColor: Color.fromARGB(255, 247, 250, 248),
-    elevation: 3,
-    shadowColor: Colors.grey,
-    title: Text('chargeEase',
-      style: TextStyle(
-        color: Colors.black,
-        fontSize: 20,
-        fontFamily: 'Audiowide',
-        fontWeight: FontWeight.normal,
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 247, 250, 248),
+        elevation: 3,
+        shadowColor: Colors.grey,
+        title: Text(
+          'chargeEase',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontFamily: 'Audiowide',
+            fontWeight: FontWeight.normal,
+          ),
+        ),
       ),
-    ),
-  ),
-  body: SafeArea(
-    child: Builder(
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Add Station',
-              style: GoogleFonts.getFont(
-                "Poppins",
-                textStyle: TextStyle(
-                  color: Color.fromARGB(255, 0, 0, 0),
-                  fontSize: 18.0, // Reduced font size for title
-                  fontWeight: FontWeight.bold,
+      body: SafeArea(
+        child: Builder(
+          builder: (context) => Container(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Add Station',
+                  style: GoogleFonts.getFont(
+                    "Poppins",
+                    textStyle: TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontSize: 18.0, // Reduced font size for title
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    // Your form fields
-                    
-Padding(
+                SizedBox(height: 10),
+                Container(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        // Your form fields
+
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 20, left: 40, right: 40, bottom: 10),
+                          child: CustomTextField(
+                              labelText: "Station Name",
+                              controller: stationController,
+                              prefixIcon: Icons.ev_station),
+                        ),
+                        Padding(
                             padding: const EdgeInsets.only(
-                                top: 20, left: 40, right: 40, bottom: 10),
-                            child: CustomTextField(
-                                labelText: "Station Name",
-                                controller: stationController,
-                                prefixIcon: Icons.ev_station),
-                          ),
-                          Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 40, right: 40, bottom: 5),
-                              child: DropdownButtonFormField<int>(
-                                decoration: InputDecoration(
-                                  labelText: 'No of Slots',
-                                  //prefix: Icon(Icons.grid_3x3),
-                                  border: OutlineInputBorder(),
-                                  contentPadding: EdgeInsets.symmetric(
-                                    vertical: 6.0,
-                                    horizontal: 10.0,
+                                left: 40, right: 40, bottom: 5),
+                            child: DropdownButtonFormField<int>(
+                              decoration: InputDecoration(
+                                labelText: 'No of Slots',
+                                //prefix: Icon(Icons.grid_3x3),
+                                border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.symmetric(
+                                  vertical: 6.0,
+                                  horizontal: 10.0,
+                                ),
+                              ),
+                              value: selectedSlots, // selected value
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedSlots =
+                                      value; // update selected value
+                                });
+                              },
+                              items: List.generate(
+                                10,
+                                (index) => DropdownMenuItem<int>(
+                                  value: index + 1, // values from 1 to 10
+                                  child: Text(
+                                    '${index + 1}', // display numbers as dropdown items
                                   ),
                                 ),
-                                value: selectedSlots, // selected value
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedSlots =
-                                        value; // update selected value
-                                  });
+                              ),
+                              style: TextStyle(
+                                  fontSize: 16.0, color: Colors.black),
+                              // Add this line to ensure the hint is displayed initially
+                              hint: Text('Select number of slots'),
+                            )),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 5, left: 40, right: 40, bottom: 5),
+                          child: CustomTextField(
+                              labelText: "Price of slot",
+                              controller: priceController),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 10.0, left: 30, right: 30, bottom: 10),
+                  child: LocationInput(
+                    onLocationChanged: (latitude, longitude) {
+                      setState(() {
+                        _latitude = latitude;
+                        _longitude = longitude;
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _addStation(context);
+                      setState(() {
+                        stationController.clear();
+                        priceController.clear();
+                      });
+                    } else {
+                      print("inside validity else");
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: Color.fromARGB(255, 174, 227, 234),
+                            title: Text(
+                              'Validation Error',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            content: Text('Please fill in all the fields!'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
                                 },
-                                items: List.generate(
-                                  10,
-                                  (index) => DropdownMenuItem<int>(
-                                    value: index + 1, // values from 1 to 10
-                                    child: Text(
-                                      '${index + 1}', // display numbers as dropdown items
-                                    ),
-                                  ),
+                                child: Text(
+                                  'OK',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                                style: TextStyle(
-                                    fontSize: 16.0, color: Colors.black),
-                                // Add this line to ensure the hint is displayed initially
-                                hint: Text('Select number of slots'),
-                              )),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 5, left: 40, right: 40, bottom: 5),
-                            child: CustomTextField(
-                                labelText: "Price of slot",
-                                controller: priceController),
-                          ),
-                  ],
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
+                  child: Text("Add Station"),
                 ),
-              ),
+              ],
             ),
-            SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0, left: 30, right: 30, bottom: 10),
-              child: LocationInput(
-                onLocationChanged: (latitude, longitude) {
-                  setState(() {
-                    _latitude = latitude;
-                    _longitude = longitude;
-                  });
-                },
-              ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(boxShadow: [
+          BoxShadow(
+            color: Colors.grey,
+            blurRadius: 5.0,
+            spreadRadius: 3,
+            offset: Offset(0, 3),
+          )
+        ]),
+        child: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.ev_station),
+              label: 'Add Station',
             ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                 print('inside validation');// _addStation();
-                } else {
-                  print("inside validity else");
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Color.fromARGB(255, 174, 227, 234),
-            title: Text('Validation Error',
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold
-              
-            ),),
-            content: Text('Please fill in all the fields!'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK',style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold
-                ),),
-              ),
-            ],
-          );
-        },
-      );
-    }
-              },
-              child: Text("Add Station"),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile',
             ),
           ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Color.fromARGB(255, 40, 154, 169),
+          onTap: _onItemTapped,
         ),
       ),
-    ),
-  ),
-  bottomNavigationBar: Container(
-    decoration: BoxDecoration(boxShadow: [
-      BoxShadow(
-        color: Colors.grey,
-        blurRadius: 5.0,
-        spreadRadius: 3,
-        offset: Offset(0, 3),
-      )
-    ]),
-    child: BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.ev_station),
-          label: 'Add Station',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profile',
-        ),
-      ],
-      currentIndex: _selectedIndex,
-      selectedItemColor: Color.fromARGB(255, 40, 154, 169),
-      onTap: _onItemTapped,
-    ),
-  ),
-);
-
+    );
   }
 }
-
-
 
 class Stations {
   static final CollectionReference _stations =
       FirebaseFirestore.instance.collection('Stations');
 
   static Future<void> addStation(
+      BuildContext context, // Pass BuildContext as a parameter
       String name,
       int slots,
       double price,
       double latitude,
       double longitude,
-      String ownerName,
-      String _phoneNumber) async {
+      String? ownerName,
+      String? ownerNumber) async {
     try {
       await _stations.add({
-        'name': name,
-        'owner': ownerName,
-        'phone': _phoneNumber,
-        'slots': slots,
-        'price': price,
-        'latitude': latitude,
-        'longitude': longitude,
+        'Name': name,
+        'Owner': ownerName,
+        'Contact': ownerNumber,
+        'Slots': slots,
+        'Price': price,
+        'Latitude': latitude,
+        'Longitude': longitude,
+      }).then((value) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: Color.fromARGB(255, 174, 227, 234),
+              content: Text('Station added successfully'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'OK',
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
       });
     } catch (e) {
       print("Error adding document: $e");

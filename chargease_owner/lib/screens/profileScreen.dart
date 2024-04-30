@@ -3,8 +3,11 @@ import 'package:chargease_owner/screens/loginScreen.dart';
 import 'package:chargease_owner/screens/maps.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class profileScreen extends StatefulWidget {
+  final SharedPreferences prefs;
+  profileScreen({required this.prefs});
   @override
   State<profileScreen> createState() => _profileScreenState();
 }
@@ -19,10 +22,10 @@ class _profileScreenState extends State<profileScreen> {
     });
     if (_selectedIndex == 0) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => addStationScreen()));
+          context, MaterialPageRoute(builder: (context) => addStationScreen(prefs:widget.prefs)));
     } else if (_selectedIndex == 1) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => profileScreen()));
+          context, MaterialPageRoute(builder: (context) => profileScreen(prefs: widget.prefs,)));
     }
   }
 
@@ -72,13 +75,13 @@ class _profileScreenState extends State<profileScreen> {
               onPressed: () async {
                 // Sign out the user
                 await FirebaseAuth.instance.signOut();
-
+                widget.prefs.setString('docId', '');
                 // Navigate to the login screen
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          LoginScreen()), // Replace LoginScreen() with your actual login screen widget
+                          LoginScreen(prefs:widget.prefs)), // Replace LoginScreen() with your actual login screen widget
                 );
               },
               child: Text('Logout'),

@@ -1,3 +1,4 @@
+import 'package:chargease_owner/Functions/checkUserData.dart';
 import 'package:chargease_owner/screens/addStationScreen.dart';
 import 'package:chargease_owner/widgets/GenderButtonWidget.dart';
 //import 'package:firebase_core/firebase_core.dart';
@@ -5,13 +6,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:intl_phone_field/phone_number.dart';
-
 
 class DataEntryScreen extends StatefulWidget {
   final String phoneNumber;
-
-  DataEntryScreen({required this.phoneNumber});
+  final SharedPreferences prefs;
+  DataEntryScreen({required this.phoneNumber,required this.prefs});
 
   @override
   State<DataEntryScreen> createState() => _DataEntryScreenState();
@@ -20,7 +21,7 @@ class DataEntryScreen extends StatefulWidget {
 class _DataEntryScreenState extends State<DataEntryScreen>
     with TickerProviderStateMixin {
   String selectedGender = "male";
-  String? userExist='n';
+  String? userExist = 'n';
   String? _errorMessage;
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
@@ -35,7 +36,7 @@ class _DataEntryScreenState extends State<DataEntryScreen>
   @override
   void initState() {
     super.initState();
-    checkUserData(widget.phoneNumber);
+    
     _controller = AnimationController(
       duration: Duration(milliseconds: 300),
       vsync: this,
@@ -57,39 +58,7 @@ class _DataEntryScreenState extends State<DataEntryScreen>
 
 //Funtion to check if the user is already existing
 
-  Future<void> checkUserData(String phoneNumber) async {
-    try {
-      // Reference to the Firestore collection
-      CollectionReference owners = FirebaseFirestore.instance.collection('Owner');
-
-      // Query to check if a document with the given phone number exists
-      QuerySnapshot querySnapshot =
-          await owners.where('phoneNumber', isEqualTo: phoneNumber).get();
-
-      // Check if any documents were found
-      if (querySnapshot.docs.isNotEmpty) {
-        // Extract data from the first document found (assuming phone numbers are unique)
-        Map<String, dynamic> ownerData =
-            querySnapshot.docs.first.data() as Map<String, dynamic>;
-        print('user found $ownerData');
-        setState(() {
-          userExist='y';
-          print("user exist variable : $userExist");
-        });
-
-        //return userData;
-      } else {
-        print("${widget.phoneNumber} user not found");
-
-        // If no documents were found, return null
-        //return null;
-      }
-    } catch (e) {
-      // Handle any errors
-      print("Error fetching user data: $e");
-      //return null;
-    }
-  }
+ 
 
 // Function to show date picker dialog
   Future<void> _selectDate(BuildContext context) async {
@@ -316,21 +285,11 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                       height: 110,
                       width: 40,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: ()async {
                           if (_formKey.currentState!.validate()) {
                             // Validate form fields
-
                             // Check if user data exists
-                            if (userExist=='y') {
-                              print(
-                                  "User already exists, skipping data write.");
-                              // Navigate to home screen without writing data
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => addStationScreen()),
-                              );
-                            } else {
+                            
                               // Write data to Firestore
                               try {
                                 CollectionReference collRef = FirebaseFirestore
@@ -345,13 +304,21 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                                       : null,
                                   'Gender': selectedGender,
                                   'phoneNumber': widget.phoneNumber
-                                }).then((value) {
-                                  print('Data stored successfully');
-                                  // Navigate to home screen after data is written
+                                }).then((DocumentReference document) {
+                                  // Use DocumentReference
+                                  // Get the document ID (UID) of the newly created document
+                                  String docId = document.id;
+
+                                  print(
+                                      'Data stored successfully with document ID: $docId');
+                                  widget.prefs.setString('docId', docId);
+                                  // Navigate to addStationScreen and pass the document ID
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>addStationScreen()),
+                                      builder: (context) =>
+                                          addStationScreen(prefs: widget.prefs,),
+                                    ),
                                   );
                                 }).catchError((error) {
                                   print('Error storing data: $error');
@@ -360,7 +327,7 @@ class _DataEntryScreenState extends State<DataEntryScreen>
                                 print('Error storing data: $error');
                               }
                             }
-                          } else {
+                           else {
                             // If form fields are not valid, show error message
                             setState(() {
                               _errorMessage = "Fill all required fields";
