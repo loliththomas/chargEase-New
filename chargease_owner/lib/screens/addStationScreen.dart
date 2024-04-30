@@ -68,7 +68,7 @@ class _addStationScreenState extends State<addStationScreen> {
 
   void _addStation(BuildContext context) async{
     String name = stationController.text;
-    int slots = int.tryParse(slotsController.text) ?? 1;
+    int slots = selectedSlots?? 1;
     double price = double.tryParse(priceController.text) ?? 10;
     ownerName =
         getUserData(widget.prefs.getString('docId'), "Name"); // use await
@@ -79,7 +79,7 @@ class _addStationScreenState extends State<addStationScreen> {
     String? Onum=await  ownerNumber;
 
     print('owner name in main : $Oname');
-
+  print('slots no = $slots');
     placeName=getLocationName(_latitude as double, _longitude as double);
     place=await placeName;
     Stations.addStation(
@@ -159,6 +159,7 @@ class _addStationScreenState extends State<addStationScreen> {
                                 setState(() {
                                   selectedSlots =
                                       value; // update selected value
+                                      print('no of slots selected $selectedSlots');
                                 });
                               },
                               items: List.generate(
@@ -205,7 +206,7 @@ class _addStationScreenState extends State<addStationScreen> {
                 ),
                 
  SizedBox(
-                width: 135,
+                width: 145,
                 height: 40,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),

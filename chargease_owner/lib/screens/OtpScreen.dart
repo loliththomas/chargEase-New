@@ -17,7 +17,10 @@ class OtpScreen extends StatefulWidget {
   final String verificationId;
   final SharedPreferences prefs; // Add SharedPreferences here
 
-  OtpScreen({required this.phoneNumber, required this.verificationId,required this.prefs});
+  OtpScreen(
+      {required this.phoneNumber,
+      required this.verificationId,
+      required this.prefs});
 
   @override
   _OtpScreenState createState() => _OtpScreenState();
@@ -32,10 +35,12 @@ class _OtpScreenState extends State<OtpScreen> {
   String? uid;
 
   TextEditingController otpController = TextEditingController();
-
+  void updateUserExist(bool value){
+    setState(() {
+      userExist='y';
+    });
+  }
   //Funtion to check if the user is already existing
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +120,9 @@ class _OtpScreenState extends State<OtpScreen> {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: ((context) => LoginScreen(prefs: widget.prefs,))));
+                                builder: ((context) => LoginScreen(
+                                      prefs: widget.prefs,
+                                    ))));
                         // Handle Change Number click
                       },
                       child: Text('Change Number'),
@@ -148,24 +155,13 @@ class _OtpScreenState extends State<OtpScreen> {
                                 await FirebaseAuth.instance
                                     .signInWithCredential(credential);
 
-                                String? userId = await checkUserData(
-                                    widget.phoneNumber);
-                                widget.prefs.setString('docId',userId??'') ;
+                                String? userId =
+                                    await checkUserData(widget.phoneNumber,updateUserExist);
+                                widget.prefs.setString('docId', userId ?? '');
                                 print('user id $userId');
-                                if (userId!='') {
-
-                                  setState(() {
-                                    uid = userId;
-                                  });
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => addStationScreen(
-                                        prefs:widget.prefs
-                                      ),
-                                    ),
-                                  );
-                                } else  () {
+                                print('user exist $userExist');
+                                if (userId==null) {
+                                  print('no user found in db');
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
@@ -175,7 +171,19 @@ class _OtpScreenState extends State<OtpScreen> {
                                       ),
                                     ),
                                   );
-                                };
+                                } else if (userId==widget.prefs.getString('docId')) {
+                                    print('object exists');
+                                    setState(() {
+                                      uid = userId;
+                                    });
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => addStationScreen(
+                                            prefs: widget.prefs),
+                                      ),
+                                    );
+                                  };
                               } catch (e) {
                                 log(e.toString());
                                 showDialog(
