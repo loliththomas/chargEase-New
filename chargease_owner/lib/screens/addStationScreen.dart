@@ -195,8 +195,18 @@ class _addStationScreenState extends State<addStationScreen> {
                 SizedBox(
                   height: 10,
                 ),
-                ElevatedButton(
-                  onPressed: () {
+                
+ SizedBox(
+                width: 135,
+                height: 40,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: DecoratedBox(
+                    child: SizedBox(
+                      height: 110,
+                      width: 40,
+                      child: ElevatedButton(
+                         onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _addStation(context);
                       setState(() {
@@ -238,8 +248,26 @@ class _addStationScreenState extends State<addStationScreen> {
                       );
                     }
                   },
-                  child: Text("Add Station"),
+                        child: Text(
+                          '+ Add Station',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(0, 255, 255, 255),
+                          // Transparent background to ensure gradient shows
+                        ),
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [
+                      Color.fromARGB(255, 105, 208, 221),
+                      Color.fromARGB(255, 61, 139, 240)
+                    ])),
+                  ),
                 ),
+              )
+
               ],
             ),
           ),
