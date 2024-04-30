@@ -1,22 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-String? getUserData(String? docId, String parameter) {
-  FirebaseFirestore.instance
-      .collection('Owner')
-      .doc(docId)
-      .get()
-      .then((DocumentSnapshot documentSnapshot) {
+Future<String?> getUserData(String? docId, String parameter) async {
+  try {
+    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+        .collection('Owner')
+        .doc(docId)
+        .get();
+
     if (documentSnapshot.exists) {
-      print("doc id is ${docId}");
+      print("doc id inside getuserdata ${docId}");
       Map<String, dynamic> userData =
           documentSnapshot.data() as Map<String, dynamic>;
+      print("$parameter is   ${userData[parameter]}");
       return userData[parameter];
     } else {
       print('User document does not exist');
       return null;
     }
-  }).catchError((error) {
+  } catch (error) {
     print('Error fetching user data: $error');
     return null;
-  });
+  }
 }

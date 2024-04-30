@@ -31,8 +31,8 @@ class _addStationScreenState extends State<addStationScreen> {
   double? _latitude;
   double? _longitude;
   Map<String, dynamic>? ownerData;
-  String? ownerName;
-  String? ownerNumber;
+  late Future<String?> ownerName;
+  late Future<String?> ownerNumber;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -62,15 +62,21 @@ class _addStationScreenState extends State<addStationScreen> {
     }
   }
 
-  void _addStation(BuildContext context) {
+  void _addStation(BuildContext context) async{
     String name = stationController.text;
     int slots = int.tryParse(slotsController.text) ?? 1;
     double price = double.tryParse(priceController.text) ?? 10;
-    ownerName = getUserData(widget.prefs.getString('docId'), "Name");
+    ownerName =
+        getUserData(widget.prefs.getString('docId'), "Name"); // use await
+    print("Owner $ownerName");
     ownerNumber = getUserData(widget.prefs.getString('docId'), "phoneNumber");
+    String? Oname = await ownerName;
 
+    String? Onum=await  ownerNumber;
+
+    print('owner name in main : $Oname');
     Stations.addStation(
-        context,name, slots, price, _latitude!, _longitude!, ownerName, ownerNumber);
+        context, name, slots, price, _latitude!, _longitude!, Oname, Onum);
 
     //Stations.addStation(name, slots, price, latitude!, longitude!);
   }
@@ -210,10 +216,10 @@ class _addStationScreenState extends State<addStationScreen> {
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold),
                             ),
-                            content: Text('Please fill in all the fields!',
-                            style: TextStyle(
-                              color: Colors.black
-                            ),),
+                            content: Text(
+                              'Please fill in all the fields!',
+                              style: TextStyle(color: Colors.black),
+                            ),
                             actions: <Widget>[
                               TextButton(
                                 onPressed: () {
