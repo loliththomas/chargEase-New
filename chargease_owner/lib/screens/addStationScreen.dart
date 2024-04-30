@@ -210,7 +210,10 @@ class _addStationScreenState extends State<addStationScreen> {
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold),
                             ),
-                            content: Text('Please fill in all the fields!'),
+                            content: Text('Please fill in all the fields!',
+                            style: TextStyle(
+                              color: Colors.black
+                            ),),
                             actions: <Widget>[
                               TextButton(
                                 onPressed: () {
