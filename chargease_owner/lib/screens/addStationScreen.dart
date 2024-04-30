@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:chargease_owner/Functions/getLocationName.dart';
 import 'package:chargease_owner/Functions/getUserData.dart';
 import 'package:chargease_owner/screens/profileScreen.dart';
 //import 'package:chargease_owner/widgets/LocationInput.dart';
@@ -13,6 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 class addStationScreen extends StatefulWidget {
   final SharedPreferences prefs; // Add SharedPreferences here
@@ -28,6 +30,8 @@ class _addStationScreenState extends State<addStationScreen> {
   final slotsController = TextEditingController();
   final priceController = TextEditingController();
   late int? selectedSlots = 1;
+  late String? place;
+  late Future<String?> placeName;
   double? _latitude;
   double? _longitude;
   Map<String, dynamic>? ownerData;
@@ -75,8 +79,11 @@ class _addStationScreenState extends State<addStationScreen> {
     String? Onum=await  ownerNumber;
 
     print('owner name in main : $Oname');
+
+    placeName=getLocationName(_latitude as double, _longitude as double);
+    place=await placeName;
     Stations.addStation(
-        context, name, slots, price, _latitude!, _longitude!, Oname, Onum);
+        context, name, slots, price, _latitude!, _longitude!, Oname, Onum,place);
 
     //Stations.addStation(name, slots, price, latitude!, longitude!);
   }
@@ -188,6 +195,7 @@ class _addStationScreenState extends State<addStationScreen> {
                       setState(() {
                         _latitude = latitude;
                         _longitude = longitude;
+                        
                       });
                     },
                   ),
@@ -314,7 +322,9 @@ class Stations {
       double latitude,
       double longitude,
       String? ownerName,
-      String? ownerNumber) async {
+      String? ownerNumber,
+      String? place
+      ) async {
     try {
       await _stations.add({
         'Name': name,
@@ -322,8 +332,11 @@ class Stations {
         'Contact': ownerNumber,
         'Slots': slots,
         'Price': price,
+        "Available Slots":slots,
         'Latitude': latitude,
         'Longitude': longitude,
+        "Location": place,
+        
       }).then((value) {
         showDialog(
           context: context,

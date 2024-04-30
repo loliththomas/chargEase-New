@@ -2,6 +2,7 @@ import 'package:chargease_owner/Functions/getUserData.dart';
 import 'package:chargease_owner/Screens/addStationScreen.dart';
 import 'package:chargease_owner/screens/loginScreen.dart';
 import 'package:chargease_owner/screens/maps.dart';
+import 'package:chargease_owner/screens/myStationsScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +16,16 @@ class profileScreen extends StatefulWidget {
 
 class _profileScreenState extends State<profileScreen> {
   int _selectedIndex = 1; // For navigation bar selection
+  late String? userName, email;
 
+
+  
+  @override
+  void initState() {
+    super.initState();
+    // Fetch user's name when the widget initializes
+    _getNameMail();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -55,24 +65,23 @@ class _profileScreenState extends State<profileScreen> {
             ),
             SizedBox(height: 20),
             Text(
-              'John Doe',
+              userName as String,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
             Text(
-              'john.doe@example.com',
+              email as String,
               style: TextStyle(fontSize: 18, color: Colors.grey),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => mapScreen()),
-                );
-              },
-              child: Text("Go to map screen"),
-            ),
+            TextButton(
+  onPressed: () {
+   Navigator.push(context, MaterialPageRoute(builder: (context)=> MyStationsScreen(ownerName: userName)));
+  },
+  child: Text('View my stations '),
+)
+,
+SizedBox(height: 10,),
             ElevatedButton(
               onPressed: () async {
                 // Sign out the user
@@ -117,5 +126,16 @@ class _profileScreenState extends State<profileScreen> {
         ),
       ),
     );
+  }
+  
+  void _getNameMail()async {
+    String? ownerName =await getUserData(widget.prefs.getString('docId'), "Name"); 
+    String? ownerMail =await getUserData(widget.prefs.getString('docId'), "Email"); 
+    setState(() {
+      email= ownerMail;
+     userName= ownerName;
+      
+    });
+    
   }
 }
