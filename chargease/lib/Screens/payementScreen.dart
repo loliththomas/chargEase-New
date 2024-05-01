@@ -1,4 +1,4 @@
-import 'package:chargease/Screens/bookingConfirmation.dart';
+import 'package:chargease/Screens/bookingConfirmationScreen.dart';
 import 'package:chargease/widgets/paymentAnimationWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
