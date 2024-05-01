@@ -196,7 +196,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
           // Map container to display stations
           Container(
-            height: 670.0, // Adjust height as needed
+            height: 615.0, // Adjust height as needed
             child: Stack(
               children: [
                 GoogleMap(

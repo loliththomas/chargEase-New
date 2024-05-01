@@ -24,7 +24,7 @@ class _paymentScreenState extends State<paymentScreen> {
     
     String? userId=widget.prefs.getString('docId');
     // Bookings.addBooking(stationData["Name"],userId,stationData["Price"], "UPI","Done",stationData["Contact"],Timestamp.now(),stationData['Location']);
-    String? documentId = await Bookings.addBooking(stationData["Name"], userId, stationData["Price"], "UPI", "Successfull", stationData["Contact"], Timestamp.now(), stationData['Location']);
+    String? documentId = await Bookings.addBooking(stationData["Name"], userId, stationData["Price"], "UPI", "Successfull", stationData["Contact"], Timestamp.now(), stationData['Location'],sId);
     if (documentId != null) {
       _updateAvailableSlots(sId);
     _showPaymentSuccessAnimation(context, widget.prefs, widget.stationData, documentId);
@@ -201,7 +201,8 @@ class Bookings {
       String paymentStatus,
       String contact,
       Timestamp time,
-      String location
+      String location,
+      String stationId,
       ) async {
     try {
       DocumentReference docRef= await _bookings.add({
@@ -213,6 +214,7 @@ class Bookings {
         'paymentMode': paymentMode,
         'paymentStatus': paymentStatus,
         'bookingTime': time,
+        'stationId': stationId
       });
       print("booking added successfully");
       return docRef.id;

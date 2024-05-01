@@ -428,10 +428,10 @@ class _LocationInputState extends State<LocationInput> {
         mapType: MapType.normal,
         initialCameraPosition: CameraPosition(
           target: LatLng(
-            _locationData?.latitude ?? 0,
-            _locationData?.longitude ?? 0,
+            _locationData?.latitude ?? 10.03145228385956,
+            _locationData?.longitude ?? 76.32927138970321,
           ),
-          zoom: 13.0,
+          zoom: 12.0,
         ),
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
@@ -454,7 +454,7 @@ class _LocationInputState extends State<LocationInput> {
     return Column(
       children: [
         TextButton.icon(
-          label: Text("Get Current Location"),
+          label: Text("Get Current Location",style: TextStyle(color: Color(0xFF289AA9)),),
           icon: Icon(Icons.location_on),
           onPressed: () {
             _getCurrentLocation();

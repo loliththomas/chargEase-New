@@ -46,10 +46,7 @@ dependencies:
   google_sign_in: ^6.1.6
   geolocator: ^11.0.0
 
-#testing is commented
-#dev_dependencies:
-#  flutter_test:
-#    sdk: flutter
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -63,6 +60,15 @@ dependencies:
   shared_preferences: ^2.2.3
   geocoding: ^3.0.0
   flutter_svg: ^2.0.10+1
+  url_launcher: ^6.2.6
+  flutter_launcher_icons: ^0.13.1
+  flutter_screenutil: ^5.9.0
+
+  #testing is commented
+dev_dependencies:
+  
+#  flutter_test:
+#    sdk: flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

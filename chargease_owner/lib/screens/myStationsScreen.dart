@@ -32,7 +32,10 @@ void _deleteStation(String documentId, BuildContext context) {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Stations'),
+        backgroundColor: Color.fromARGB(255, 247, 250, 248),
+          elevation: 3,
+          shadowColor: Colors.grey,
+        title: Text('My Stations',style: TextStyle(fontWeight: FontWeight.bold),),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance

@@ -1,3 +1,4 @@
+import 'package:chargease/Functions/mapLauncher.dart';
 import 'package:chargease/Screens/homeScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -8,40 +9,48 @@ class bookingConfirmationScreen extends StatefulWidget {
   final SharedPreferences prefs;
   final Map<String, dynamic> stationData;
   final String bookingId;
-  bookingConfirmationScreen({required this.prefs, required this.stationData, required this.bookingId});
+  bookingConfirmationScreen(
+      {required this.prefs,
+      required this.stationData,
+      required this.bookingId});
 
   @override
-  State<bookingConfirmationScreen> createState() => _bookingConfirmationScreenState();
+  State<bookingConfirmationScreen> createState() =>
+      _bookingConfirmationScreenState();
 }
 
 class _bookingConfirmationScreenState extends State<bookingConfirmationScreen> {
+  late Map<String, dynamic> bookingData = {};
 
-  late Map<String, dynamic> bookingData={};
-
-@override
+  @override
   void initState() {
     super.initState();
-   _fetchBooking(widget.bookingId, bookingData);
+    _fetchBooking(widget.bookingId,);
+    print('datas in booking $bookingData');
   }
-    void _fetchBooking( String bookingId,Map<String, dynamic> bookingData)async {
-      try {
-    DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('Bookings').doc(bookingId).get();
 
-    // Check if the document exists
-    if (snapshot.exists) {
-      // Get all the data as a Map<String, dynamic>
-      bookingData = snapshot.data() as Map<String, dynamic>;
+  void _fetchBooking(String bookingId, ) async {
+    try {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('Bookings')
+          .doc(bookingId)
+          .get();
 
-    } else {
-      // Document with the provided ID does not exist
-      print('Document does not exist');
+      // Check if the document exists
+      if (snapshot.exists) {
+        // Get all the data as a Map<String, dynamic>
+        setState(() {
+          bookingData = snapshot.data() as Map<String, dynamic>;
+        }); 
+      } else {
+        // Document with the provided ID does not exist
+        print('Document does not exist');
+      }
+    } catch (e) {
+      print("Error fetching booking: $e");
     }
-  } catch (e) {
-    print("Error fetching booking: $e");
-  }
   }
 
-    
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,7 +89,10 @@ class _bookingConfirmationScreenState extends State<bookingConfirmationScreen> {
                   'Booking Confirmed',
                   style: GoogleFonts.getFont(
                     "Anek Malayalam",
-                    textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.black),
+                    textStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        color: Colors.black),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -102,7 +114,9 @@ class _bookingConfirmationScreenState extends State<bookingConfirmationScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10,),
+                      SizedBox(
+                        height: 10,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -117,7 +131,9 @@ class _bookingConfirmationScreenState extends State<bookingConfirmationScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10,),
+                      SizedBox(
+                        height: 10,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -144,7 +160,7 @@ class _bookingConfirmationScreenState extends State<bookingConfirmationScreen> {
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           Text(
-                            "${widget.stationData["Available Slots"]}",
+                            "${widget.stationData["Price"]}",
                             style: TextStyle(fontSize: 16),
                           ),
                         ],
@@ -161,7 +177,7 @@ class _bookingConfirmationScreenState extends State<bookingConfirmationScreen> {
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           Text(
-                            "${bookingData["paymentStatus"]}",
+                            "Successful",
                             style: TextStyle(fontSize: 16),
                           ),
                         ],
@@ -171,27 +187,50 @@ class _bookingConfirmationScreenState extends State<bookingConfirmationScreen> {
                 ),
                 Spacer(),
                 SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          homeScreen(prefs: widget.prefs,),
-                                    ),
-                                  );
-// Implement payment functionality here
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF67CEDB),
-                    elevation: 3,
-                    shadowColor: Colors.black,
-                    splashFactory: InkRipple.splashFactory,
-                  ),
-                  child: Text(
-                    'Go to home',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        double destLat=widget.stationData["Latitude"];
+                        double destLng=widget.stationData["Longitude"];
+                        launchGoogleMaps(destLat, destLng);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF67CEDB),
+                        elevation: 3,
+                        shadowColor: Colors.black,
+                        splashFactory: InkRipple.splashFactory,
+                      ),
+                      child: Text(
+                        'Get Dierection',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => homeScreen(
+                              prefs: widget.prefs,
+                            ),
+                          ),
+                        );
+                        // Implement payment functionality here
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF67CEDB),
+                        elevation: 3,
+                        shadowColor: Colors.black,
+                        splashFactory: InkRipple.splashFactory,
+                      ),
+                      child: Text(
+                        'Go to home',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -201,4 +240,3 @@ class _bookingConfirmationScreenState extends State<bookingConfirmationScreen> {
     );
   }
 }
-

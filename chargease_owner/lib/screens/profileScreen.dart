@@ -85,26 +85,44 @@ class _profileScreenState extends State<profileScreen> {
                         builder: (context) =>
                             MyStationsScreen(ownerName: userName)));
               },
-              child: Text('View my stations '),
+              child: Text('View my stations ',style: TextStyle(color: Color(0xFF289AA9)),),
             ),
             SizedBox(
               height: 10,
             ),
-            ElevatedButton(
-              onPressed: () async {
-                // Sign out the user
-                await FirebaseAuth.instance.signOut();
-                widget.prefs.setString('docId', '');
-                // Navigate to the login screen
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => LoginScreen(
-                          prefs: widget
-                              .prefs)), // Replace LoginScreen() with your actual login screen widget
-                );
-              },
-              child: Text('Logout'),
+            Padding(
+              padding: const EdgeInsets.only(right: 145.0,left: 145),
+              child: ElevatedButton(
+                onPressed: () async {
+                  // Sign out the user
+                  await FirebaseAuth.instance.signOut();
+                  widget.prefs.setString('docId', '');
+                  // Navigate to the login screen
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => LoginScreen(
+                            prefs: widget
+                                .prefs)), // Replace LoginScreen() with your actual login screen widget
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF289AA9),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        8), // Adjust border radius as needed
+                  ),
+                ),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [Icon(Icons.logout_outlined,color: Colors.white,),
+                      Text(
+                        'Logout',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+              ),
             ),
           ],
         ),

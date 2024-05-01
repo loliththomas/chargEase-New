@@ -1,6 +1,7 @@
 import 'package:chargease/screens/OpeningScreen.dart';
 import 'package:chargease/Screens/homeScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'firebase_options.dart';
 /*import 'package:chargease/screens/loginScreen.dart';*/
@@ -47,7 +48,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(
+      designSize: Size(360, 690), // Design size of your UI
+      allowFontScaling: false,
+    );
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
           scaffoldBackgroundColor: Color.fromARGB(255, 247, 250, 248),
           primaryColor: Color.fromARGB(255, 48, 136, 208)),
