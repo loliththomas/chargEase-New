@@ -2,7 +2,6 @@ import 'package:chargease/Screens/dataentryScreen.dart';
 import 'package:chargease/Screens/homeScreen.dart';
 import 'package:chargease/Screens/loginScreen.dart';
 import 'package:chargease/Functions/checkUserData.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
