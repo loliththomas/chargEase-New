@@ -32,26 +32,6 @@ class _bookingConfirmationScreenState extends State<bookingConfirmationScreen> {
       // Get all the data as a Map<String, dynamic>
       bookingData = snapshot.data() as Map<String, dynamic>;
 
-      // Now you have the booking details in the 'data' map
-      // You can access individual fields using their keys
-      // String stationName = data['stationName'];
-      // String userId = data['userId'];
-      // double price = data['price'];
-      // String paymentMode = data['paymentMode'];
-      // String paymentStatus = data['paymentStatus'];
-      // String contact = data['contact'];
-      // Timestamp bookingTime = data['bookingTime'];
-      // String location = data['location'];
-
-      // // Now you have the booking details, you can use them as needed
-      // print('Station Name: $stationName');
-      // print('User ID: $userId');
-      // print('Price: $price');
-      // print('Payment Mode: $paymentMode');
-      // print('Payment Status: $paymentStatus');
-      // print('Contact: $contact');
-      // print('Booking Time: $bookingTime');
-      // print('Location: $location');
     } else {
       // Document with the provided ID does not exist
       print('Document does not exist');
