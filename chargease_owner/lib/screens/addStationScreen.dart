@@ -66,9 +66,9 @@ class _addStationScreenState extends State<addStationScreen> {
     }
   }
 
-  void _addStation(BuildContext context) async{
+  void _addStation(BuildContext context) async {
     String name = stationController.text;
-    int slots = selectedSlots?? 1;
+    int slots = selectedSlots ?? 1;
     double price = double.tryParse(priceController.text) ?? 10;
     ownerName =
         getUserData(widget.prefs.getString('docId'), "Name"); // use await
@@ -76,14 +76,15 @@ class _addStationScreenState extends State<addStationScreen> {
     ownerNumber = getUserData(widget.prefs.getString('docId'), "phoneNumber");
     String? Oname = await ownerName;
 
-    String? Onum=await  ownerNumber;
+    String? Onum = await ownerNumber;
 
     print('owner name in main : $Oname');
-  print('slots no = $slots');
-    placeName=getLocationName(_latitude as double, _longitude as double);
-    place=await placeName;
-    Stations.addStation(
-        context, name, slots, price, _latitude!, _longitude!, Oname, Onum,place);
+    print('slots no = $slots');
+    placeName = getLocationName(_latitude as double, _longitude as double);
+    place = await placeName;
+    String? ownerId=widget.prefs.getString('docId');
+    Stations.addStation(context, name, slots, price, _latitude!, _longitude!,
+        Oname, Onum, place,ownerId);
 
     //Stations.addStation(name, slots, price, latitude!, longitude!);
   }
@@ -324,12 +325,14 @@ class Stations {
       double longitude,
       String? ownerName,
       String? ownerNumber,
-      String? place
+      String? place,
+      String? ownerId
       ) async {
     try {
       await _stations.add({
         'Name': name,
-        'Owner': ownerName,
+        'OwnerName': ownerName,
+        'OwnerId':ownerId,
         'Contact': ownerNumber,
         'Slots': slots,
         'Price': price,

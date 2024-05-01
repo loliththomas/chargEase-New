@@ -4,7 +4,6 @@ import 'package:chargease/Screens/loginScreen.dart';
 import 'package:chargease/Screens/searchScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:flutter/material.dart';
 
 class profileScreen extends StatefulWidget {

@@ -37,7 +37,7 @@ void _deleteStation(String documentId, BuildContext context) {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('Stations')
-            .where('Owner', isEqualTo: widget.ownerName)
+            .where('OwnerName', isEqualTo: widget.ownerName)
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
