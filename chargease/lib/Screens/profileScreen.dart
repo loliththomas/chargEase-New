@@ -97,14 +97,20 @@ class _profileScreenState extends State<profileScreen> {
             SizedBox(height: 20),
             TextButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>MyBookingsScreen(prefs: widget.prefs)));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            MyBookingsScreen(prefs: widget.prefs)));
               },
-              child: Text("View Bookings",style: TextStyle(color: Color(0xFF289AA9)),),
+              child: Text(
+                "View Bookings",
+                style: TextStyle(color: Color(0xFF289AA9)),
+              ),
             ),
             SizedBox(height: 20),
             Padding(
-              padding: const EdgeInsets.only(left: 145.0,right:145),
-              
+              padding: const EdgeInsets.only(left: 140.0, right: 140),
               child: ElevatedButton(
                 onPressed: () async {
                   // Sign out the user
@@ -128,7 +134,12 @@ class _profileScreenState extends State<profileScreen> {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [Icon(Icons.logout_outlined,color: Colors.white,),
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.logout_outlined,
+                      color: Colors.white,
+                    ),
                     Text(
                       'Logout',
                       style: TextStyle(color: Colors.white),

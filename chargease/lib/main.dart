@@ -48,10 +48,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(
-      designSize: Size(360, 690), // Design size of your UI
-      allowFontScaling: false,
-    );
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

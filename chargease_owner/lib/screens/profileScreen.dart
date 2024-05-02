@@ -91,7 +91,7 @@ class _profileScreenState extends State<profileScreen> {
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(right: 145.0,left: 145),
+              padding: const EdgeInsets.only(right: 140.0,left: 140),
               child: ElevatedButton(
                 onPressed: () async {
                   // Sign out the user
@@ -115,6 +115,7 @@ class _profileScreenState extends State<profileScreen> {
                 ),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [Icon(Icons.logout_outlined,color: Colors.white,),
                       Text(
                         'Logout',
