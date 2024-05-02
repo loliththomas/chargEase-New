@@ -109,44 +109,34 @@ class _profileScreenState extends State<profileScreen> {
               ),
             ),
             SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.only(left: 140.0, right: 140),
-              child: ElevatedButton(
-                onPressed: () async {
-                  // Sign out the user
-                  await FirebaseAuth.instance.signOut();
-                  widget.prefs.setString('docId', '');
-                  // Navigate to the login screen
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => LoginScreen(
-                            prefs: widget
-                                .prefs)), // Replace LoginScreen() with your actual login screen widget
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF289AA9),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                        8), // Adjust border radius as needed
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.logout_outlined,
-                      color: Colors.white,
-                    ),
-                    Text(
-                      'Logout',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ],
+            ElevatedButton(
+              onPressed: () async {
+                // Sign out the user
+                await FirebaseAuth.instance.signOut();
+                widget.prefs.setString('docId', '');
+                // Navigate to the login screen
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => LoginScreen(
+                          prefs: widget
+                              .prefs)), // Replace LoginScreen() with your actual login screen widget
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF289AA9),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      8), // Adjust border radius as needed
                 ),
               ),
+              child: 
+                  Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                
+              
             ),
           ],
         ),

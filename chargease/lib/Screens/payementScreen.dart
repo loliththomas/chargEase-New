@@ -1,62 +1,94 @@
 import 'package:chargease/Screens/bookingConfirmationScreen.dart';
 import 'package:chargease/widgets/paymentAnimationWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class paymentScreen extends StatefulWidget {
   final SharedPreferences prefs;
   final Map<String, dynamic> stationData;
   final String stationId;
 
-  paymentScreen({required this.prefs, required this.stationData, required this.stationId});
+  paymentScreen(
+      {required this.prefs,
+      required this.stationData,
+      required this.stationId});
 
   @override
   State<paymentScreen> createState() => _paymentScreenState();
 }
 
 class _paymentScreenState extends State<paymentScreen> {
+  Razorpay razorpay = Razorpay();
 
-  
-  void _addBooking(BuildContext context, Map<String, dynamic> stationData,String sId)async  {
-    
-    String? userId=widget.prefs.getString('docId');
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    Fluttertoast.showToast(msg: "Payement Success");
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(msg: "Payement Failed");
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    razorpay.clear();
+  }
+
+  void _addBooking(BuildContext context, Map<String, dynamic> stationData,
+      String sId) async {
+    String? userId = widget.prefs.getString('docId');
     // Bookings.addBooking(stationData["Name"],userId,stationData["Price"], "UPI","Done",stationData["Contact"],Timestamp.now(),stationData['Location']);
-    String? documentId = await Bookings.addBooking(stationData["Name"], userId, stationData["Price"], "UPI", "Successfull", stationData["Contact"], Timestamp.now(), stationData['Location'],sId);
+    String? documentId = await Bookings.addBooking(
+        stationData["Name"],
+        userId,
+        stationData["Price"],
+        "UPI",
+        "Successfull",
+        stationData["Contact"],
+        Timestamp.now(),
+        stationData['Location'],
+        sId);
     if (documentId != null) {
       _updateAvailableSlots(sId);
-    _showPaymentSuccessAnimation(context, widget.prefs, widget.stationData, documentId);
-  } else {
-    // Handle error adding booking
+      _showPaymentSuccessAnimation(context, widget.prefs, stationData, documentId);
+      
+    } else {
+      // Handle error adding booking
+    }
   }
+
+  void _updateAvailableSlots(String stationId) async {
+    try {
+      // Get reference to the station document
+      DocumentReference stationRef =
+          FirebaseFirestore.instance.collection('Stations').doc(stationId);
+
+      // Retrieve current availableSlots value
+      DocumentSnapshot stationSnapshot = await stationRef.get();
+      int currentAvailableSlots = stationSnapshot.get('Available Slots');
+
+      // Decrement availableSlots by one
+      int newAvailableSlots = currentAvailableSlots - 1;
+
+      // Update the document with the new value
+      await stationRef.update({'Available Slots': newAvailableSlots});
+
+      print(
+          'Available slots decremented successfully for station with ID: $stationId');
+    } catch (e) {
+      print('Error decrementing available slots: $e');
+    }
   }
-  
-  
-void _updateAvailableSlots(String stationId) async {
-  try {
-    // Get reference to the station document
-    DocumentReference stationRef = FirebaseFirestore.instance.collection('Stations').doc(stationId);
-
-    // Retrieve current availableSlots value
-    DocumentSnapshot stationSnapshot = await stationRef.get();
-    int currentAvailableSlots = stationSnapshot.get('Available Slots');
-
-    // Decrement availableSlots by one
-    int newAvailableSlots = currentAvailableSlots - 1;
-
-    // Update the document with the new value
-    await stationRef.update({'Available Slots': newAvailableSlots});
-
-    print('Available slots decremented successfully for station with ID: $stationId');
-  } catch (e) {
-    print('Error decrementing available slots: $e');
-  }
-}
 
   @override
   Widget build(BuildContext context) {
+    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     return Scaffold(
       backgroundColor: Color(0xFF57B1BC),
       appBar: AppBar(
@@ -144,7 +176,21 @@ void _updateAvailableSlots(String stationId) async {
                 SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
-                    _addBooking( context,widget.stationData,widget.stationId);
+                    var options = {
+                      'key': 'rzp_test_GcZZFDPP0jHtC4',
+                      'amount': widget.stationData["Price"],
+                      'name': widget.stationData["Name"],
+                      'description': 'Ev Slot Booking',
+                      'prefill': {
+                        'contact': widget.stationData['Contact'],
+                        'email': 'chargEase@razorpay.com'
+                      }
+                    };
+
+                    razorpay.open(options);
+                    _addBooking(context, widget.stationData, widget.stationId);
+
+
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF67CEDB),
@@ -166,9 +212,8 @@ void _updateAvailableSlots(String stationId) async {
   }
 }
 
-void _showPaymentSuccessAnimation(BuildContext context,SharedPreferences prefs, Map<String, dynamic> stationData,String bookingId) async {
-  
-
+void _showPaymentSuccessAnimation(BuildContext context, SharedPreferences prefs,
+    Map<String, dynamic> stationData, String bookingId) async {
   await showDialog(
     context: context,
     builder: (context) {
@@ -183,29 +228,30 @@ void _showPaymentSuccessAnimation(BuildContext context,SharedPreferences prefs, 
     },
   );
 
-  Navigator.pushReplacement(context,
-      MaterialPageRoute(builder: (context) => bookingConfirmationScreen(prefs: prefs,stationData: stationData,bookingId: bookingId)));
+  Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (context) => bookingConfirmationScreen(
+              prefs: prefs, stationData: stationData, bookingId: bookingId)));
 }
-
-
 
 class Bookings {
   static final CollectionReference _bookings =
       FirebaseFirestore.instance.collection('Bookings');
 
   static Future<String?> addBooking(
-      String stationName,
-      String? userId,
-      double price,
-      String paymentMode ,
-      String paymentStatus,
-      String contact,
-      Timestamp time,
-      String location,
-      String stationId,
-      ) async {
+    String stationName,
+    String? userId,
+    double price,
+    String paymentMode,
+    String paymentStatus,
+    String contact,
+    Timestamp time,
+    String location,
+    String stationId,
+  ) async {
     try {
-      DocumentReference docRef= await _bookings.add({
+      DocumentReference docRef = await _bookings.add({
         'stationName': stationName,
         'userId': userId,
         'price': price,
